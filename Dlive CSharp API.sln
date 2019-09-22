@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2050
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dlive CSharp API Test", "Dlive CSharp API Test\Dlive CSharp API Test.csproj", "{47A4766C-8ACF-463E-9CEC-EF34C5151517}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dlive CSharp API", "Dlive CSharp API\Dlive CSharp API.csproj", "{D94BB811-16A6-450A-AA61-997DBA033425}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{47A4766C-8ACF-463E-9CEC-EF34C5151517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47A4766C-8ACF-463E-9CEC-EF34C5151517}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47A4766C-8ACF-463E-9CEC-EF34C5151517}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47A4766C-8ACF-463E-9CEC-EF34C5151517}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D94BB811-16A6-450A-AA61-997DBA033425}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D94BB811-16A6-450A-AA61-997DBA033425}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D94BB811-16A6-450A-AA61-997DBA033425}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D94BB811-16A6-450A-AA61-997DBA033425}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D2BCBD94-08A0-4972-9FB4-A6EB34B8E6FC}
+	EndGlobalSection
+EndGlobal
