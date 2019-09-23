@@ -1,14 +1,12 @@
-﻿namespace DSharp.Chat
+﻿namespace DSharp.Subscription.Chat
 {
-    public class ChatModeChangeMessage : ChatMessage
+    public class ChatModeChangeMessage : UserChatMessage
     {
         public ChatMode NewMode { get; }
-        public object User { get; }
         
-        public ChatModeChangeMessage(string id, ChatMode mode, object user) : base(ChatEventType.CHAT_MODE, id)
+        public ChatModeChangeMessage(string id, ChatMode mode, PublicUserData user) : base(ChatEventType.CHAT_MODE, id, user)
         {
             NewMode = mode;
-            User = user;
         }
     }
 }

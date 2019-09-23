@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DSharp.Chest
+namespace DSharp.Subscription.Chest
 {
     public class ChestGiveawayStartedMessage : ChestMessage
     {

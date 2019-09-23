@@ -1,12 +1,12 @@
-﻿namespace DSharp.Chat
+﻿namespace DSharp.Subscription.Chat
 {
     public class ChatGiftSubscriptionMessage : ChatMessage
     {
         public int Months { get; }
-        public object GiftingUser { get; }
-        public object ReceivingUser { get; }
+        public PublicUserData GiftingUser { get; }
+        public PublicUserData ReceivingUser { get; }
 
-        public ChatGiftSubscriptionMessage(string id, int months, object giftingUser, object receiveingUser) : base(ChatEventType.GIFTSUB, id)
+        public ChatGiftSubscriptionMessage(string id, int months, PublicUserData giftingUser, PublicUserData receiveingUser) : base(ChatEventType.GIFTSUB, id)
         {
             Months = months;
             GiftingUser = giftingUser;

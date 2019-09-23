@@ -1,4 +1,5 @@
 .vs/
+.idea/
 Dlive CSharp API Test/
 
 ## Ignore Visual Studio temporary files, build results, and

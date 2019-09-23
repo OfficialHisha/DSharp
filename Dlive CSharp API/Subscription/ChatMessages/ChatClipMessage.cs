@@ -1,15 +1,13 @@
 ﻿using System;
 
-namespace DSharp.Chat
+namespace DSharp.Subscription.Chat
 {
-    public class ChatClipMessage : ChatMessage
+    public class ChatClipMessage : UserChatMessage
     {
-        public object User { get; }
         public Uri ClipUri { get; }
 
-        public ChatClipMessage(string id, object user, Uri link) : base(ChatEventType.CLIP, id) 
+        public ChatClipMessage(string id, PublicUserData user, Uri link) : base(ChatEventType.CLIP, id, user) 
         {
-            User = user;
             ClipUri = link;
         }
     }

@@ -5,15 +5,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using DSharp.Chat;
-using DSharp.Chest;
+using DSharp.Subscription.Chat;
+using DSharp.Subscription.Chest;
 using DSharp.Utility;
 
-namespace DSharp
+namespace DSharp.Subscription
 {
     public static class Subscription
     {
-        public static bool IsConnected { get; private set; } = false;
+        public static bool IsConnected { get; private set; }
 
         public static event Action OnConnected;
         public static event Action<string> OnDisconnected;
@@ -23,12 +23,9 @@ namespace DSharp
 
         private static CancellationTokenSource _cancellationToken = new CancellationTokenSource();
 
-        private static Uri _uri = new Uri("wss://api-ws.dlive.tv");
-        private static Uri _altUri = new Uri("wss://graphigostream.prd.dlive.tv/");
-
         private static ClientWebSocket _socket = new ClientWebSocket();
 
-        private static bool _isAlive = false;
+        private static bool _isAlive;
 
         [Obsolete("This method is not yet implemented. Use Subscribe for now")]
         public static SubscriptionData SubscribeByDisplayName(string displayName, SubscriptionType subscriptionType = SubscriptionType.CHAT)
@@ -64,7 +61,7 @@ namespace DSharp
         {
             byte[] messageBuffer = new byte[128];
 
-            await _socket.ConnectAsync(_altUri, CancellationToken.None);
+            await _socket.ConnectAsync(Dlive.SubscriptionEndpoint, CancellationToken.None);
 
             messageBuffer = Encoding.ASCII.GetBytes("{\"type\":\"connection_init\"}");
 
@@ -163,40 +160,37 @@ namespace DSharp
             switch (type)
             {
                 case ChatEventType.MESSAGE:
-                    OnChatEvent?.Invoke(new ChatTextMessage(id, data[0].content.ToString(), data[0].sender));
+                    OnChatEvent?.Invoke(new ChatTextMessage(id, data[0].content.ToString(), Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.GIFT:
                     Enum.TryParse(data[0].gift.ToString(), out GiftType giftType);
-                    OnChatEvent?.Invoke(new ChatGiftMessage(id, giftType, int.Parse(data[0].amount.ToString()), data[0].message.ToString(), data[0].sender));
+                    OnChatEvent?.Invoke(new ChatGiftMessage(id, giftType, int.Parse(data[0].amount.ToString()), data[0].message.ToString(), Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.SUBSCRIPTION:
-                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(id, int.Parse(data[0].month.ToString()), data[0].sender));
+                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(id, int.Parse(data[0].month.ToString()), Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.HOST:
-                    OnChatEvent?.Invoke(new ChatHostMessage(id, int.Parse(data[0].viewer.ToString()), data[0].sender));
+                    OnChatEvent?.Invoke(new ChatHostMessage(id, int.Parse(data[0].viewer.ToString()), Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.CHAT_MODE:
                     Enum.TryParse(data[0].mode.ToString(), out ChatMode mode);
-                    OnChatEvent?.Invoke(new ChatModeChangeMessage(id, mode, data[0].sender));
+                    OnChatEvent?.Invoke(new ChatModeChangeMessage(id, mode, Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.BAN:
-                    OnChatEvent?.Invoke(new ChatBanMessage(id, data[0].sender, data[0].bannedBy));
+                    OnChatEvent?.Invoke(new ChatBanMessage(id, Util.UserObjectToPublicUserData(data[0].sender), Util.UserObjectToPublicUserData(data[0].bannedBy)));
                     break;
                 case ChatEventType.MOD:
                     ModeratorStatusChange change = bool.Parse(data[0].add.ToString()) ? ModeratorStatusChange.PROMOTED : ModeratorStatusChange.DEMOTED;
-                    OnChatEvent?.Invoke(new ChatModStatusChangeMessage(id, change, data[0].sender));
+                    OnChatEvent?.Invoke(new ChatModStatusChangeMessage(id, change, Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.EMOTE:
-                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(id, data[0].emote.ToString(), data[0].sender));
+                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(id, data[0].emote.ToString(), Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.TIMEOUT:
-                    OnChatEvent?.Invoke(new ChatTimeoutMessage(id, int.Parse(data[0].minute.ToString()), data[0].sender, data[0].bannedBy));
-                    break;
-                case ChatEventType.FOLLOW:
-                    OnChatEvent?.Invoke(new ChatFollowMessage(id, data[0].sender));
+                    OnChatEvent?.Invoke(new ChatTimeoutMessage(id, int.Parse(data[0].minute.ToString()), Util.UserObjectToPublicUserData(data[0].sender), Util.UserObjectToPublicUserData(data[0].bannedBy)));
                     break;
                 case ChatEventType.CLIP:
-                    OnChatEvent?.Invoke(new ChatClipMessage(id, data[0].sender, new Uri($"https://dlive.tv/clip/{data[0].url.ToString()}")));
+                    OnChatEvent?.Invoke(new ChatClipMessage(id, Util.UserObjectToPublicUserData(data[0].sender), new Uri($"https://dlive.tv/clip/{data[0].url.ToString()}")));
                     break;
                 case ChatEventType.GIFTSUB:
                     Console.WriteLine(data[0]);
@@ -205,10 +199,11 @@ namespace DSharp
                     if (!int.TryParse(data[0].count.ToString(), out months))
                         months = 1;
 
-                    OnChatEvent?.Invoke(new ChatGiftSubscriptionMessage(id, months, data[0].sender, data[0].receiver));
+                    OnChatEvent?.Invoke(new ChatGiftSubscriptionMessage(id, months, Util.UserObjectToPublicUserData(data[0].sender), Util.UserObjectToPublicUserData(data[0].receiver)));
                     break;
                 default:
-                    OnChatEvent?.Invoke(new ChatMessage(type, id));
+                    object user = data[0].sender;
+                    OnChatEvent?.Invoke(user != null ? new UserChatMessage(type, id, Util.UserObjectToPublicUserData(data[0].sender)): new ChatMessage(type, id));
                     break;
             }
         }

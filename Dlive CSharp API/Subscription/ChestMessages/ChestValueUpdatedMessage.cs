@@ -1,4 +1,4 @@
-﻿namespace DSharp.Chest
+﻿namespace DSharp.Subscription.Chest
 {
     public class ChestValueUpdatedMessage : ChestMessage
     {

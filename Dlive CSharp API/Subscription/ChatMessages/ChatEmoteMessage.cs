@@ -1,14 +1,12 @@
-﻿namespace DSharp.Chat
+﻿namespace DSharp.Subscription.Chat
 {
-    public class ChatEmoteMessage : ChatMessage
+    public class ChatEmoteMessage : UserChatMessage
     {
         public string Emote { get; }
-        public object User { get; }
         
-        public ChatEmoteMessage(string id, string emote, object user) : base(ChatEventType.EMOTE, id)
+        public ChatEmoteMessage(string id, string emote, PublicUserData user) : base(ChatEventType.EMOTE, id, user)
         {
             Emote = emote;
-            User = user;
         }
     }
 }

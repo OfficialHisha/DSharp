@@ -1,14 +1,12 @@
-﻿namespace DSharp.Chat
+﻿namespace DSharp.Subscription.Chat
 {
-    public class ChatHostMessage : ChatMessage
+    public class ChatHostMessage : UserChatMessage
     {
         public int Viewers { get; }
-        public object User { get; }
         
-        public ChatHostMessage(string id, int viewers, object user) : base(ChatEventType.HOST, id)
+        public ChatHostMessage(string id, int viewers, PublicUserData user) : base(ChatEventType.HOST, id, user)
         {
             Viewers = viewers;
-            User = user;
         }
     }
 }

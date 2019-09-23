@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DSharp
+namespace DSharp.Subscription
 {
     class WebSocketConnectionRefusedException : Exception
     {

@@ -1,4 +1,4 @@
-﻿namespace DSharp
+﻿namespace DSharp.Subscription
 {
     public struct SubscriptionData
     {

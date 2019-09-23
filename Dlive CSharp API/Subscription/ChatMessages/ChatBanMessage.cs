@@ -1,13 +1,13 @@
-﻿namespace DSharp.Chat
+﻿namespace DSharp.Subscription.Chat
 {
     public class ChatBanMessage : ChatMessage
     {
-        public object User { get; }
-        public object Admin { get; }
+        public PublicUserData BannedUser { get; }
+        public PublicUserData Admin { get; }
 
-        public ChatBanMessage(string id, object user, object admin) : base(ChatEventType.BAN, id)
+        public ChatBanMessage(string id, PublicUserData bannedUser, PublicUserData admin) : base(ChatEventType.BAN, id)
         {
-            User = user;
+            BannedUser = bannedUser;
             Admin = admin;
         }
     }

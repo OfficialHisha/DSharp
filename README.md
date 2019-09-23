@@ -1,2 +1,2 @@
-# DSharp
-A Dlive.tv API written in C#
+# D#
+An unofficial Dlive.tv API written in C#
