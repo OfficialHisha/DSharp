@@ -21,9 +21,9 @@ namespace DSharp.Mutation
             
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
 
-            if (res.Data.err != null)
+            if (res.Errors != null)
             {
-                throw new Exception($"An error occured while sending chat message: {res.Data.err.message.ToString()}");
+                throw new Exception($"An error occured while sending chat message: {res.Errors[0].Message}");
             }
         }
 
@@ -39,9 +39,9 @@ namespace DSharp.Mutation
             
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
 
-            if (res.Data.err != null)
+            if (res.Errors != null)
             {
-                throw new Exception($"An error occured while sending chat message: {res.Data.err.message.ToString()}");
+                throw new Exception($"An error occured while deleting chat message: {res.Errors[0].Message}");
             }
         }
 
@@ -57,9 +57,9 @@ namespace DSharp.Mutation
             
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
 
-            if (res.Data.err != null)
+            if (res.Errors != null)
             {
-                throw new Exception($"An error occured while sending chat message: {res.Data.err.message.ToString()}");
+                throw new Exception($"An error occured while adding moderator: {res.Errors[0].Message}");
             }
         }
 
@@ -75,9 +75,9 @@ namespace DSharp.Mutation
             
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
 
-            if (res.Data.err != null)
+            if (res.Errors != null)
             {
-                throw new Exception($"An error occured while sending chat message: {res.Data.err.message.ToString()}");
+                throw new Exception($"An error occured while removing moderator: {res.Errors[0].Message}");
             }
         }
 
@@ -93,12 +93,12 @@ namespace DSharp.Mutation
             
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
 
-            if (res.Data.err != null)
+            if (res.Errors != null)
             {
-                throw new Exception($"An error occured while creating a new panel: {res.Data.err.message.ToString()}");
+                throw new Exception($"An error occured while creating a new panel: {res.Errors[0].Message}");
             }
 
-            UpdateAboutPanel(new AboutPanel(int.Parse(res.Data.panel.id.ToString()), type, title, content, image, imageDestination));
+            UpdateAboutPanel(new AboutPanel(int.Parse(res.Data.panelAdd.panel.id.ToString()), type, title, content, image, imageDestination));
         }
 
         public static void AddAboutPanel(AboutPanel panel)
@@ -113,9 +113,9 @@ namespace DSharp.Mutation
             
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
 
-            if (res.Data.err != null)
+            if (res.Errors != null)
             {
-                throw new Exception($"An error occured while creating a new panel: {res.Data.err.message.ToString()}");
+                throw new Exception($"An error occured while creating a new panel: {res.Errors[0].Message}");
             }
 
             UpdateAboutPanel(new AboutPanel(int.Parse(res.Data.panel.id.ToString()), panel.PanelType, panel.PanelTitle, panel.PanelText, panel.PanelImageUrl, panel.PanelUrlDestination));
@@ -125,14 +125,14 @@ namespace DSharp.Mutation
         {
             GraphQLRequest _req = new GraphQLRequest
             {
-                Query = $"mutation{{panelUpdate(input:{{ id: {panel.PanelId}, title: {panel.PanelTitle}, imageURL: {panel.PanelImageUrl}, imageLinkURL: {panel.PanelUrlDestination}, body: {panel.PanelText} }}) {{ err {{ message }}}}}}"
+                Query = $"mutation{{panelUpdate(input:{{ id: {panel.PanelId}, title: \"{panel.PanelTitle}\", body: \"{panel.PanelText}\", imageURL: \"{(panel.PanelImageUrl == null ? "" : panel.PanelImageUrl.ToString())}\", imageLinkURL: \"{(panel.PanelUrlDestination == null ? "" : panel.PanelUrlDestination.ToString())}\" }}) {{ err {{ message }}}}}}"
             };
             
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
 
-            if (res.Data.err != null)
+            if (res.Errors != null)
             {
-                throw new Exception($"An error occured while applying new panel values: {res.Data.err.message.ToString()}");
+                throw new Exception($"An error occured while updating panel: {res.Errors[0].Message}");
             }
         }
 
@@ -145,9 +145,9 @@ namespace DSharp.Mutation
             
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
 
-            if (res.Data.err != null)
+            if (res.Errors != null)
             {
-                throw new Exception($"An error occured while deleting a panel: {res.Data.err.message.ToString()}");
+                throw new Exception($"An error occured while deleting panel: {res.Errors[0].Message}");
             }
         }
         
@@ -160,9 +160,9 @@ namespace DSharp.Mutation
             
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
 
-            if (res.Data.err != null)
+            if (res.Errors != null)
             {
-                throw new Exception($"An error occured while deleting a panel: {res.Data.err.message.ToString()}");
+                throw new Exception($"An error occured while deliting panel: {res.Errors[0].Message}");
             }
         }
 
@@ -175,9 +175,9 @@ namespace DSharp.Mutation
             
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
 
-            if (res.Data.err != null)
+            if (res.Errors != null)
             {
-                throw new Exception($"An error occured while ordering panels: {res.Data.err.message.ToString()}");
+                throw new Exception($"An error occured while updating panel order: {res.Errors[0].Message}");
             }
         }
         
@@ -197,9 +197,9 @@ namespace DSharp.Mutation
             
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
 
-            if (res.Data.err != null)
+            if (res.Errors != null)
             {
-                throw new Exception($"An error occured while ordering panels: {res.Data.err.message.ToString()}");
+                throw new Exception($"An error occured while updating panel order: {res.Errors[0].Message}");
             }
         }
     }
