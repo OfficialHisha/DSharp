@@ -4,7 +4,7 @@
     {
         public int Months { get; }
         
-        public ChatSubscriptionMessage(string id, int months, PublicUserData user) : base(ChatEventType.SUBSCRIPTION, id, user)
+        public ChatSubscriptionMessage(string channel, string messageId, int months, PublicUserData user) : base(ChatEventType.SUBSCRIPTION, channel, messageId, user)
         {
             Months = months;
         }

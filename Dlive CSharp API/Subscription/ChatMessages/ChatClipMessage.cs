@@ -6,7 +6,7 @@ namespace DSharp.Subscription.Chat
     {
         public Uri ClipUri { get; }
 
-        public ChatClipMessage(string id, PublicUserData user, Uri link) : base(ChatEventType.CLIP, id, user) 
+        public ChatClipMessage(string channel, string messageId, PublicUserData user, Uri link) : base(ChatEventType.CLIP, channel, messageId, user) 
         {
             ClipUri = link;
         }

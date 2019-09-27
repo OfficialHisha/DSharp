@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Text;
 using DSharp.Query;
 
@@ -17,6 +18,14 @@ namespace DSharp.GraphqlHelpers
                                 displayname
                                 avatar
                                 partnerStatus
+                                panels {
+                                    id
+                                    type
+                                    title
+                                    imageURL
+                                    imageLinkURL
+                                    body
+                                }
                                 followers {
                                     totalCount
                                 private {
@@ -36,6 +45,14 @@ namespace DSharp.GraphqlHelpers
                         displayname
                         avatar
                         partnerStatus
+                        panels {
+                            id
+                            type
+                            title
+                            imageURL
+                            imageLinkURL
+                            body
+                        }
                         followers {
                             totalCount
                         }}}");
@@ -48,12 +65,20 @@ namespace DSharp.GraphqlHelpers
                         displayname
                         avatar
                         partnerStatus
+                        panels {
+                            id
+                            type
+                            title
+                            imageURL
+                            imageLinkURL
+                            body
+                        }
                         followers {
                             totalCount
                         }}}");
                     return userByDisplayname.ToString();
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(queryType), queryType, "Invalid query type provided");
+                    throw new InvalidEnumArgumentException($"Invalid query type provided ({nameof(queryType)})");
             }
         }
     }

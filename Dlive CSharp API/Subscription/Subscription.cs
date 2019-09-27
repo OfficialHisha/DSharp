@@ -27,10 +27,11 @@ namespace DSharp.Subscription
 
         private static bool _isAlive;
 
-        [Obsolete("This method is not yet implemented. Use Subscribe for now")]
         public static SubscriptionData SubscribeByDisplayName(string displayName, SubscriptionType subscriptionType = SubscriptionType.CHAT)
         {
-            throw new NotImplementedException("This method is not yet implemented. Use Subscribe for now");
+            PublicUserData user = Query.Query.GetPublicInfoByDisplayname(displayName);
+
+            return Subscribe(user.Linoname, subscriptionType);
         }
 
         public static SubscriptionData Subscribe(string streamerUsername, SubscriptionType subscriptionType = SubscriptionType.CHAT)
@@ -151,7 +152,7 @@ namespace DSharp.Subscription
             }
         }
 
-        private static void BuildChatMessage(string id, dynamic data)
+        private static void BuildChatMessage(string channel, dynamic data)
         {
             Enum.TryParse(data[0].type.ToString().ToUpper(), out ChatEventType type);
 
@@ -160,37 +161,37 @@ namespace DSharp.Subscription
             switch (type)
             {
                 case ChatEventType.MESSAGE:
-                    OnChatEvent?.Invoke(new ChatTextMessage(id, data[0].content.ToString(), Util.UserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatTextMessage(channel, data[0].id.ToString(), data[0].content.ToString(), Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.GIFT:
                     Enum.TryParse(data[0].gift.ToString(), out GiftType giftType);
-                    OnChatEvent?.Invoke(new ChatGiftMessage(id, giftType, int.Parse(data[0].amount.ToString()), data[0].message.ToString(), Util.UserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatGiftMessage(channel, data[0].id.ToString(), giftType, int.Parse(data[0].amount.ToString()), data[0].message.ToString(), Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.SUBSCRIPTION:
-                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(id, int.Parse(data[0].month.ToString()), Util.UserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(channel, data[0].id.ToString(), int.Parse(data[0].month.ToString()), Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.HOST:
-                    OnChatEvent?.Invoke(new ChatHostMessage(id, int.Parse(data[0].viewer.ToString()), Util.UserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatHostMessage(channel, data[0].id.ToString(), int.Parse(data[0].viewer.ToString()), Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.CHAT_MODE:
                     Enum.TryParse(data[0].mode.ToString(), out ChatMode mode);
-                    OnChatEvent?.Invoke(new ChatModeChangeMessage(id, mode, Util.UserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatModeChangeMessage(channel, data[0].id.ToString(), mode, Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.BAN:
-                    OnChatEvent?.Invoke(new ChatBanMessage(id, Util.UserObjectToPublicUserData(data[0].sender), Util.UserObjectToPublicUserData(data[0].bannedBy)));
+                    OnChatEvent?.Invoke(new ChatBanMessage(channel, data[0].id.ToString(), Util.UserObjectToPublicUserData(data[0].sender), Util.UserObjectToPublicUserData(data[0].bannedBy)));
                     break;
                 case ChatEventType.MOD:
                     ModeratorStatusChange change = bool.Parse(data[0].add.ToString()) ? ModeratorStatusChange.PROMOTED : ModeratorStatusChange.DEMOTED;
-                    OnChatEvent?.Invoke(new ChatModStatusChangeMessage(id, change, Util.UserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatModStatusChangeMessage(channel, data[0].id.ToString(), change, Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.EMOTE:
-                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(id, data[0].emote.ToString(), Util.UserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(channel, data[0].id.ToString(), data[0].emote.ToString(), Util.UserObjectToPublicUserData(data[0].sender)));
                     break;
                 case ChatEventType.TIMEOUT:
-                    OnChatEvent?.Invoke(new ChatTimeoutMessage(id, int.Parse(data[0].minute.ToString()), Util.UserObjectToPublicUserData(data[0].sender), Util.UserObjectToPublicUserData(data[0].bannedBy)));
+                    OnChatEvent?.Invoke(new ChatTimeoutMessage(channel, data[0].id.ToString(), int.Parse(data[0].minute.ToString()), Util.UserObjectToPublicUserData(data[0].sender), Util.UserObjectToPublicUserData(data[0].bannedBy)));
                     break;
                 case ChatEventType.CLIP:
-                    OnChatEvent?.Invoke(new ChatClipMessage(id, Util.UserObjectToPublicUserData(data[0].sender), new Uri($"https://dlive.tv/clip/{data[0].url.ToString()}")));
+                    OnChatEvent?.Invoke(new ChatClipMessage(channel, data[0].id.ToString(), Util.UserObjectToPublicUserData(data[0].sender), new Uri($"https://dlive.tv/clip/{data[0].url.ToString()}")));
                     break;
                 case ChatEventType.GIFTSUB:
                     Console.WriteLine(data[0]);
@@ -199,16 +200,16 @@ namespace DSharp.Subscription
                     if (!int.TryParse(data[0].count.ToString(), out months))
                         months = 1;
 
-                    OnChatEvent?.Invoke(new ChatGiftSubscriptionMessage(id, months, Util.UserObjectToPublicUserData(data[0].sender), Util.UserObjectToPublicUserData(data[0].receiver)));
+                    OnChatEvent?.Invoke(new ChatGiftSubscriptionMessage(channel, data[0].id.ToString(), months, Util.UserObjectToPublicUserData(data[0].sender), Util.UserObjectToPublicUserData(data[0].receiver)));
                     break;
                 default:
                     object user = data[0].sender;
-                    OnChatEvent?.Invoke(user != null ? new UserChatMessage(type, id, Util.UserObjectToPublicUserData(data[0].sender)): new ChatMessage(type, id));
+                    OnChatEvent?.Invoke(user != null ? new UserChatMessage(type, channel, data[0].id.ToString(), Util.UserObjectToPublicUserData(data[0].sender)): new ChatMessage(type, channel, data[0].id.ToString()));
                     break;
             }
         }
 
-        private static void BuildChestMessage(string id, dynamic data)
+        private static void BuildChestMessage(string channel, dynamic data)
         {
             Enum.TryParse(data.type.ToString().ToUpper(), out ChestEventType type);
 
@@ -217,16 +218,16 @@ namespace DSharp.Subscription
             switch (type)
             {
                 case ChestEventType.GIVEAWAYSTARTED://1568841544000
-                    OnChestEvent?.Invoke(new ChestGiveawayStartedMessage(id, float.Parse(data.pricePool.ToString()) / 100000, int.Parse(data.durationInSeconds.ToString()), Util.EpocMSToDateTime(double.Parse(data.endTime.ToString()))));
+                    OnChestEvent?.Invoke(new ChestGiveawayStartedMessage(channel, float.Parse(data.pricePool.ToString()) / 100000, int.Parse(data.durationInSeconds.ToString()), Util.EpocMSToDateTime(double.Parse(data.endTime.ToString()))));
                     break;
                 case ChestEventType.VALUEEXPIRED:
-                    OnChestEvent?.Invoke(new ChestValueExpiredMessage(id, float.Parse(data.value.ToString()) / 100000, Util.EpocMSToDateTime(double.Parse(data.endTime.ToString()))));
+                    OnChestEvent?.Invoke(new ChestValueExpiredMessage(channel, float.Parse(data.value.ToString()) / 100000, Util.EpocMSToDateTime(double.Parse(data.endTime.ToString()))));
                     break;
                 case ChestEventType.VALUEUPDATED:
-                    OnChestEvent?.Invoke(new ChestValueUpdatedMessage(id, float.Parse(data.value.ToString()) / 100000));
+                    OnChestEvent?.Invoke(new ChestValueUpdatedMessage(channel, float.Parse(data.value.ToString()) / 100000));
                     break;
                 default:
-                    OnChestEvent?.Invoke(new ChestMessage(type, id));
+                    OnChestEvent?.Invoke(new ChestMessage(type, channel));
                     break;
             }
         }

@@ -4,7 +4,7 @@
     {
         public int Viewers { get; }
         
-        public ChatHostMessage(string id, int viewers, PublicUserData user) : base(ChatEventType.HOST, id, user)
+        public ChatHostMessage(string channel, string messageId, int viewers, PublicUserData user) : base(ChatEventType.HOST, channel, messageId, user)
         {
             Viewers = viewers;
         }

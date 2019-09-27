@@ -4,7 +4,7 @@
     {
         public ChatMode NewMode { get; }
         
-        public ChatModeChangeMessage(string id, ChatMode mode, PublicUserData user) : base(ChatEventType.CHAT_MODE, id, user)
+        public ChatModeChangeMessage(string channel, string messageId, ChatMode mode, PublicUserData user) : base(ChatEventType.CHAT_MODE, channel, messageId, user)
         {
             NewMode = mode;
         }

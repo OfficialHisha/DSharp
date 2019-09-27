@@ -13,7 +13,7 @@ namespace DSharp.Utility
         public static PublicUserData UserObjectToPublicUserData(dynamic userObject)
         {
             Enum.TryParse(userObject.partnerStatus.ToString().ToUpper(), out PartnerStatus partnerStatus);
-            return new PublicUserData(userObject.username.ToString(), userObject.displayname.ToString(), partnerStatus, new Uri(userObject.avatar.ToString()), -1);
+            return new PublicUserData(userObject.username.ToString(), userObject.displayname.ToString(), partnerStatus, null, new Uri(userObject.avatar.ToString()), -1);
         }
     }
 }

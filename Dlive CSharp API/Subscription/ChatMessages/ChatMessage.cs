@@ -2,12 +2,14 @@
 {
     public class ChatMessage
     {
+        public string MessageId { get; }
         public string ChannelId { get; }
         public ChatEventType EventType { get; }
 
-        public ChatMessage(ChatEventType eventType, string id)
+        public ChatMessage(ChatEventType eventType, string channel, string messageId)
         {
-            ChannelId = id;
+            MessageId = messageId;
+            ChannelId = channel;
             EventType = eventType;
         }
     }

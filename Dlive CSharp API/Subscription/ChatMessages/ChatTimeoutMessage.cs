@@ -6,7 +6,7 @@
         public PublicUserData TimedoutUser { get; }
         public PublicUserData Admin { get; }
 
-        public ChatTimeoutMessage(string id, int duration, PublicUserData timedoutUser, PublicUserData admin) : base(ChatEventType.TIMEOUT, id)
+        public ChatTimeoutMessage(string channel, string messageId, int duration, PublicUserData timedoutUser, PublicUserData admin) : base(ChatEventType.TIMEOUT, channel, messageId)
         {
             TimeoutMinutes = duration;
             TimedoutUser = timedoutUser;

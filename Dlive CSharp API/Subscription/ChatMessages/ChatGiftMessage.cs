@@ -7,7 +7,7 @@
         public int AmountGifts { get; }
         public string GiftMessage { get; }
 
-        public ChatGiftMessage(string id, GiftType type, int amount, string message, PublicUserData user) : base(ChatEventType.GIFT, id, user)
+        public ChatGiftMessage(string channel, string messageId, GiftType type, int amount, string message, PublicUserData user) : base(ChatEventType.GIFT, channel, messageId, user)
         {
             GiftType = type;
             GiftMessage = message;

@@ -4,7 +4,7 @@ namespace DSharp.Subscription.Chat
     {
         public PublicUserData User { get; }
 
-        public UserChatMessage(ChatEventType eventType, string channelId, PublicUserData user) : base(eventType, channelId)
+        public UserChatMessage(ChatEventType eventType, string channel, string messageId, PublicUserData user) : base(eventType, channel, messageId)
         {
             User = user;
         }

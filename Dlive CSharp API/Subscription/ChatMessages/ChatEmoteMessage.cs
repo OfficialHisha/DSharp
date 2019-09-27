@@ -4,7 +4,7 @@
     {
         public string Emote { get; }
         
-        public ChatEmoteMessage(string id, string emote, PublicUserData user) : base(ChatEventType.EMOTE, id, user)
+        public ChatEmoteMessage(string channel, string messageId, string emote, PublicUserData user) : base(ChatEventType.EMOTE, channel, messageId, user)
         {
             Emote = emote;
         }
