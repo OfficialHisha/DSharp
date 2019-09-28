@@ -1,5 +1,4 @@
 using System;
-using Newtonsoft.Json.Linq;
 
 namespace DSharp
 {
@@ -14,10 +13,10 @@ namespace DSharp
             Private = privateUserData;
         }
         
-        public UserData(string linoname, string displayname, PartnerStatus partnerStatus, AboutPanel[] panels, Uri avatar,
-                        long followerCount, long subscriberCount, string email, string[] wordFilter, string streamKey)
+        public UserData(string linoname, string displayname, PartnerStatus partnerStatus, bool deactivated, AboutPanel[] panels, Uri avatar, long followerCount,
+                        long chest, long balance, long totalEarnings, long subscriberCount, string email, string[] wordFilter, string streamKey)
         {
-            Public = new PublicUserData(linoname, displayname, partnerStatus, panels, avatar, followerCount);
+            Public = new PublicUserData(linoname, displayname, partnerStatus, deactivated, panels, avatar, followerCount, chest, balance, totalEarnings);
             Private = new PrivateUserData(subscriberCount, email, wordFilter, streamKey);
         }
     }

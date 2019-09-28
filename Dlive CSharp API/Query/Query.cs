@@ -13,10 +13,14 @@ namespace DSharp.Query
             public string username;
             public string displayname;
             public PartnerStatus partnerStatus;
+            public bool deactivated;
             public Uri avatar;
             public JObject followers;
+            public JObject treasureChest;
+            public JObject wallet;
             public InternalPanelData[] panels;
             public InternalPrivateData @private;
+
 
             public UserData ToUserData()
             {
@@ -26,7 +30,8 @@ namespace DSharp.Query
                     actualPanels.Add(panel.ToAboutPanel());
                 }
                 
-                PublicUserData publicData = new PublicUserData(username, displayname, partnerStatus, actualPanels.ToArray(), avatar, (long)followers["totalCount"]);
+                PublicUserData publicData = new PublicUserData(username, displayname, partnerStatus, deactivated, actualPanels.ToArray(), avatar, (long)followers["totalCount"],
+                                                              (long)treasureChest["value"], (long)wallet["balance"], (long)wallet["totalEarning"]);
                 PrivateUserData privateData = new PrivateUserData((long) @private.subscribers["totalCount"],
                     @private.email, @private.filterWords, @private.streamKey["key"].ToString());
                 
@@ -40,7 +45,8 @@ namespace DSharp.Query
                 {
                     actualPanels.Add(panel.ToAboutPanel());
                 }
-                return new PublicUserData(username, displayname, partnerStatus, actualPanels.ToArray(), avatar, (long)followers["totalCount"]);
+                return new PublicUserData(username, displayname, partnerStatus, deactivated, actualPanels.ToArray(), avatar, (long)followers["totalCount"],
+                                         (long)treasureChest["value"], (long)wallet["balance"], (long)wallet["totalEarning"]);
             }
         }
 

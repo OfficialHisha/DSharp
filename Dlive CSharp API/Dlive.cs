@@ -1,6 +1,5 @@
 using System;
 using System.Net.Http.Headers;
-using System.Net.WebSockets;
 using GraphQL.Client.Http;
 
 namespace DSharp
