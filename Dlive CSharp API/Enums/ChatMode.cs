@@ -1,4 +1,4 @@
-﻿namespace DSharp.Subscription
+﻿namespace DSharp
 {
     public enum ChatMode
     {

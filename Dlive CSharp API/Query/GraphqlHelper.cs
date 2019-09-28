@@ -18,6 +18,7 @@ namespace DSharp.GraphqlHelpers
                                 displayname
                                 avatar
                                 partnerStatus
+                                deactivated
                                 panels {
                                     id
                                     type
@@ -28,6 +29,14 @@ namespace DSharp.GraphqlHelpers
                                 }
                                 followers {
                                     totalCount
+                                }
+                                wallet {
+                                    totalEarning
+                                    balance
+                                }
+                                treasureChest {
+                                    value
+                                }
                                 private {
                                     email
                                     subscribers {
@@ -45,6 +54,7 @@ namespace DSharp.GraphqlHelpers
                         displayname
                         avatar
                         partnerStatus
+                        deactivated
                         panels {
                             id
                             type
@@ -55,6 +65,13 @@ namespace DSharp.GraphqlHelpers
                         }
                         followers {
                             totalCount
+                        }
+                        wallet {
+                            totalEarning
+                            balance
+                        }
+                        treasureChest {
+                            value
                         }}}");
                     return user.ToString();
                 case QueryType.USER_BY_DISPLAYNAME:
@@ -65,6 +82,7 @@ namespace DSharp.GraphqlHelpers
                         displayname
                         avatar
                         partnerStatus
+                        deactivated
                         panels {
                             id
                             type
@@ -75,6 +93,13 @@ namespace DSharp.GraphqlHelpers
                         }
                         followers {
                             totalCount
+                        }
+                        wallet {
+                            totalEarning
+                            balance
+                        }
+                        treasureChest {
+                            value
                         }}}");
                     return userByDisplayname.ToString();
                 default:
