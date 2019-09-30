@@ -4,7 +4,7 @@
     {
         NONE,
         AFFILIATE,
-        PARTNER,
+        VERIFIED_PARTNER,
         GLOBAL_PARTNER,
         GLOBAL_PARTNER_SUSPENDED
     }
