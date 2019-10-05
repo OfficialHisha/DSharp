@@ -197,7 +197,7 @@ namespace DSharp.Mutation
 
             GraphQLRequest _req = new GraphQLRequest
             {
-                Query = $"mutation{{filterWordAdd(word: {word}) {{ err {{ message }}}}}}"
+                Query = $"mutation{{filterWordAdd(word: \"{word}\") {{ err {{ message }}}}}}"
             };
 
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
@@ -215,7 +215,7 @@ namespace DSharp.Mutation
 
             GraphQLRequest _req = new GraphQLRequest
             {
-                Query = $"mutation{{filterWordDelete(word: {word}) {{ err {{ message }}}}}}"
+                Query = $"mutation{{filterWordDelete(word: \"{word}\") {{ err {{ message }}}}}}"
             };
 
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
@@ -233,7 +233,7 @@ namespace DSharp.Mutation
 
             GraphQLRequest _req = new GraphQLRequest
             {
-                Query = $"mutation{{emoteBan(streamer: {streamer}, emoteStr: {emoteString}) {{ err {{ message }}}}}}"
+                Query = $"mutation{{emoteBan(streamer: \"{streamer}\", emoteStr: \"{emoteString}\") {{ err {{ message }}}}}}"
             };
 
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
@@ -251,7 +251,7 @@ namespace DSharp.Mutation
 
             GraphQLRequest _req = new GraphQLRequest
             {
-                Query = $"mutation{{emoteUnban(streamer: {streamer}, emoteStr: {emoteString}) {{ err {{ message }}}}}}"
+                Query = $"mutation{{emoteUnban(streamer: \"{streamer}\", emoteStr: \"{emoteString}\") {{ err {{ message }}}}}}"
             };
 
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
@@ -262,14 +262,14 @@ namespace DSharp.Mutation
             }
         }
 
-        public static void SetSubSettings(string streamer, string badgeColor, string textColor, string[] benefits)
+        public static void SetSubSettings(string badgeText, string badgeColor, string textColor, string[] benefits)
         {
             if (!Dlive.IsAuthenticated)
                 throw new AuthorizationException("Authentication is required to use mutations. Set the Dlive.AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
             {
-                Query = $"mutation{{subSettingSet(subSetting:{{ badgeText: {streamer}, badgeColor: {badgeColor}, textColor: {textColor}, benefits: {benefits} }}) {{ err {{ message }}}}}}"
+                Query = $"mutation{{subSettingSet(subSetting:{{ badgeText: \"{badgeText}\", badgeColor: \"{badgeColor}\", textColor: \"{textColor}\", benefits: {benefits} }}) {{ err {{ message }}}}}}"
             };
 
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
@@ -305,7 +305,7 @@ namespace DSharp.Mutation
 
             GraphQLRequest _req = new GraphQLRequest
             {
-                Query = $"mutation{{giveawayClaim(streamer: {streamer}) {{ err {{ message }}}}}}"
+                Query = $"mutation{{giveawayClaim(streamer: \"{streamer}\") {{ err {{ message }}}}}}"
             };
 
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
@@ -323,7 +323,7 @@ namespace DSharp.Mutation
 
             GraphQLRequest _req = new GraphQLRequest
             {
-                Query = $"mutation{{follow(streamer: {streamer}) {{ err {{ message }}}}}}"
+                Query = $"mutation{{follow(streamer: \"{streamer}\") {{ err {{ message }}}}}}"
             };
 
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
@@ -341,7 +341,7 @@ namespace DSharp.Mutation
 
             GraphQLRequest _req = new GraphQLRequest
             {
-                Query = $"mutation{{unfollow(streamer: {streamer}) {{ err {{ message }}}}}}"
+                Query = $"mutation{{unfollow(streamer: \"{streamer}\") {{ err {{ message }}}}}}"
             };
 
             GraphQLResponse res = Task.Run(() => Dlive.Client.SendMutationAsync(_req)).Result;
