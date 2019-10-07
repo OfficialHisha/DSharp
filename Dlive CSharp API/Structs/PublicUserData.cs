@@ -11,7 +11,7 @@ namespace DSharp
         public AboutPanel[] Panels { get; }
         public Uri AvatarUri { get; }
         public long NumFollowers { get; }
-        public long ChestValue { get; }
+        public float ChestValue { get; }
         public long LinoBalance { get; }
         public long LinoEarnings { get; }
 
@@ -24,7 +24,7 @@ namespace DSharp
             Panels = panels;
             AvatarUri = avatar;
             NumFollowers = followerCount;
-            ChestValue = chest;
+            ChestValue = (float)chest / 100000;
             LinoBalance = balance;
             LinoEarnings = earnings;
         }
