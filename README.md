@@ -7,9 +7,9 @@ Example usage of the D# API
 (There are more events than shown, but I picked out the events I think are most commonly used)
 ```CSharp
 using System;
-using DSharp;
-using DSharp.Subscription;
-using DSharp.Subscription.Chat;
+using DSharp.Dlive;
+using DSharp.Dlive.Subscription;
+using DSharp.Dlive.Subscription.Chat;
 
 namespace DSharpExamples
 {
@@ -17,8 +17,11 @@ namespace DSharpExamples
     {
         static void Main(string[] args)
         {
-            Subscription.Subscribe("your blockchain username");
-            Subscription.OnChatEvent += OnChatMessage;
+            Subscription myChatSubscription = Subscription.SubscriptionByDisplayName(myAccountDisplayName);
+            // or
+            Subscription myAlternativChatSubscription = new Subscription(myAccountUsername);
+            
+			myChatSubscription.OnChatEvent += OnChatMessage;
         }
 
         static void OnChatMessage(ChatMessage message)
@@ -57,8 +60,7 @@ namespace DSharpExamples
 ## Sending chat messages
 (Again, there are many more mutations than just sending messages, but I believe this is the most common use case)
 ```CSharp
-using DSharp;
-using DSharp.Mutation;
+using DSharp.Dlive;
 
 namespace DSharpExamples
 {
@@ -66,18 +68,19 @@ namespace DSharpExamples
     {
         static void Main(string[] args)
         {
-            Dlive.AuthorizationToken = "Your user token";
+            DliveAccount myAccount = new DliveAccount("Your Dlive user token");
 
-            Mutation.SendChatMessage("stream page for the message", "the message");
+            myAccount.Mutation.SendChatMessage("channelToSendMessageTo", "Message to send");
         }
     }
 }
 ```
 
-## Getting user data
+All mutations require usernames to be supplied where identifiers are needed.
+In order to easily convert a display name into a username, the following utility method can be used.
+
 ```CSharp
-using DSharp;
-using DSharp.Query;
+using DSharp.Utility;
 
 namespace DSharpExamples
 {
@@ -85,24 +88,43 @@ namespace DSharpExamples
     {
         static void Main(string[] args)
         {
-            Dlive.AuthorizationToken = "Your user token";
+            string displayName = Util.DliveUsernameToDisplayName("blockchain username");
+            // or the other way
+            string username = Util.DliveDisplayNameToUsername("Dlive display name");
+        }
+    }
+}
+```
 
-            UserData info = Query.GetMyInfo();
-            PublicUserData publicInfo = info.Public;
-            PrivateUserData privateInfo = info.Private;
 
-            System.Console.WriteLine($"Private user info: {info.Private}");
-            System.Console.WriteLine($"Public user info: {info.Public}");
+## Getting user data
+```CSharp
+using DSharp.Dlive;
+using DSharp.Dlive.Query;
+
+namespace DSharpExamples
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            DliveAccount myAccount = new DliveAccount("Your Dlive user token");
+
+            UserData myAccountInfo = myAccount.Query.GetMyInfo();
+			
+			// Get your follower count
+            Console.WriteLine(myAccountInfo.Public.NumFollowers);
+            
+            // Get your subscriber count
+            Console.WriteLine(myAccountInfo.Private.SubscriberCount);
 
             // GetMyInfo returns both your public and private info
             // and can be accessed as shown above
 
-            // The following queries does not require authorization
-            PublicUserData publicUser = Query.GetPublicInfo("blockchain username");
-            System.Console.WriteLine(publicUser.Displayname);
-
-            PublicUserData alsoPublicUser = Query.GetPublicInfoByDisplayname("Dlive displayname");
-            System.Console.WriteLine(alsoPublicUser.Displayname);
+            // It is also possible to use public queries without using an account
+			PublicUserData publicUser = PublicQuery.GetPublicInfoByDisplayname("Dlive display name");
+			// or
+			PublicUserData alternativePublicUser = PublicQuery.GetPublicInfo("blockchain username");
 
             // Both methods return the same (public) data, the examples are just to show that you can access the
             // information in multiple ways

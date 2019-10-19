@@ -35,17 +35,8 @@ namespace DSharp.Dlive.Mutation
                 throw new Exception($"An error occured while sending chat message: {res.Errors[0].Message}");
             }
         }
-        
-        public void SendChatMessageByDisplayName(string channelDisplayName, string message)
-        {
-            if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
-                    "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
-            SendChatMessage(Util.DliveDisplayNameToUsername(channelDisplayName), message);
-        }
-
-        public void DeleteChatMessage(string username, string messageId)
+        public void DeleteChatMessage(string channelUsername, string messageId)
         {
             if (!_account.IsAuthenticated)
                 throw new AuthorizationException(
@@ -53,7 +44,7 @@ namespace DSharp.Dlive.Mutation
 
             GraphQLRequest _req = new GraphQLRequest
             {
-                Query = $"mutation{{chatDelete(streamer: \"{username}\", id: \"{messageId}\") {{ err {{ message }}}}}}"
+                Query = $"mutation{{chatDelete(streamer: \"{channelUsername}\", id: \"{messageId}\") {{ err {{ message }}}}}}"
             };
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
@@ -62,15 +53,6 @@ namespace DSharp.Dlive.Mutation
             {
                 throw new Exception($"An error occured while deleting chat message: {res.Errors[0].Message}");
             }
-        }
-        
-        public void DeleteChatMessageByDisplayName(string channelDisplayName, string messageId)
-        {
-            if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
-                    "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
-
-            DeleteChatMessage(Util.DliveDisplayNameToUsername(channelDisplayName), messageId);
         }
 
         public void AddModerator(string newModeratorUsername)
@@ -91,15 +73,6 @@ namespace DSharp.Dlive.Mutation
                 throw new Exception($"An error occured while adding moderator: {res.Errors[0].Message}");
             }
         }
-        
-        public void AddModeratorByDisplayName(string newModeratorDisplayName)
-        {
-            if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
-                    "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
-
-            AddModerator(Util.DliveDisplayNameToUsername(newModeratorDisplayName));
-        }
 
         public void RemoveModerator(string moderatorUsername)
         {
@@ -118,15 +91,6 @@ namespace DSharp.Dlive.Mutation
             {
                 throw new Exception($"An error occured while removing moderator: {res.Errors[0].Message}");
             }
-        }
-        
-        public void RemoveModeratorByDisplayName(string moderatorDisplayName)
-        {
-            if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
-                    "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
-
-            RemoveModerator(Util.DliveDisplayNameToUsername(moderatorDisplayName));
         }
 
         public void BanUser(string channelUsername, string usernameToBan)
