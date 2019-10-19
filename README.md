@@ -21,7 +21,7 @@ namespace DSharpExamples
             // or
             Subscription myAlternativChatSubscription = new Subscription(myAccountUsername);
             
-			myChatSubscription.OnChatEvent += OnChatMessage;
+	    myChatSubscription.OnChatEvent += OnChatMessage;
         }
 
         static void OnChatMessage(ChatMessage message)
@@ -112,7 +112,7 @@ namespace DSharpExamples
 
             UserData myAccountInfo = myAccount.Query.GetMyInfo();
 			
-			// Get your follower count
+	    // Get your follower count
             Console.WriteLine(myAccountInfo.Public.NumFollowers);
             
             // Get your subscriber count
@@ -122,9 +122,9 @@ namespace DSharpExamples
             // and can be accessed as shown above
 
             // It is also possible to use public queries without using an account
-			PublicUserData publicUser = PublicQuery.GetPublicInfoByDisplayname("Dlive display name");
-			// or
-			PublicUserData alternativePublicUser = PublicQuery.GetPublicInfo("blockchain username");
+	    PublicUserData publicUser = PublicQuery.GetPublicInfoByDisplayname("Dlive display name");
+	    // or
+	    PublicUserData alternativePublicUser = PublicQuery.GetPublicInfo("blockchain username");
 
             // Both methods return the same (public) data, the examples are just to show that you can access the
             // information in multiple ways
