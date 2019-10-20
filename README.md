@@ -21,7 +21,7 @@ namespace DSharpExamples
             // or
             Subscription myAlternativChatSubscription = new Subscription(myAccountUsername);
             
-		    myChatSubscription.OnChatEvent += OnChatMessage;
+            myChatSubscription.OnChatEvent += OnChatMessage;
             myChatSubscription.Connect();
         }
 
