@@ -14,7 +14,8 @@ namespace DSharp.Dlive.Subscription
 {
     public class Subscription
     {
-        public static bool IsConnected { get; private set; }
+        public SubscriptionType Type { get; }
+        public bool IsConnected { get; private set; }
 
         public event Action OnConnected;
         public event Action<string> OnDisconnected;
@@ -25,15 +26,18 @@ namespace DSharp.Dlive.Subscription
         public string ChatId { get; private set; }
         public string ChestId { get; private set; }
 
-        private static CancellationTokenSource _cancellationToken = new CancellationTokenSource();
+        private string _username;
 
-        private static ClientWebSocket _socket = new ClientWebSocket();
+        private CancellationTokenSource _cancellationToken = new CancellationTokenSource();
 
-        private static bool _isAlive;
+        private ClientWebSocket _socket = new ClientWebSocket();
+
+        private bool _isAlive;
 
         public Subscription(string streamerUsername, SubscriptionType subscriptionType = SubscriptionType.CHAT)
         {
             _socket.Options.AddSubProtocol("graphql-ws");
+            _username = streamerUsername;
         }
 
         public static Subscription SubscriptionByDisplayName(string streamerDisplayName,
@@ -71,6 +75,23 @@ namespace DSharp.Dlive.Subscription
             Receive().ConfigureAwait(false);
             IsConnected = true;
             _isAlive = true;
+
+            switch (Type)
+            {
+                case SubscriptionType.CHAT:
+                    SubscribeChat().Wait();
+                    break;
+                case SubscriptionType.CHEST:
+                    SubscribeChest().Wait();
+                    break;
+                case SubscriptionType.ALL:
+                    SubscribeChat().Wait();
+                    SubscribeChest().Wait();
+                    break;
+                default:
+                    break;
+            }
+
             OnConnected?.Invoke();
         }
 
@@ -223,22 +244,22 @@ namespace DSharp.Dlive.Subscription
             }
         }
 
-        private async Task SubscribeChat(string username)
+        private async Task SubscribeChat()
         {
-            string id = $"{username}_chat";
+            string id = $"{_username}_chat";
             byte[] messageBuffer = new byte[512];
             
-            messageBuffer = Encoding.ASCII.GetBytes($"{{\"id\":\"{id}\",\"type\":\"start\",\"payload\":{{\"query\":\"subscription{{streamMessageReceived(streamer:\\\"{username}\\\"){{__typename}}}}\"}}}}");
+            messageBuffer = Encoding.ASCII.GetBytes($"{{\"id\":\"{id}\",\"type\":\"start\",\"payload\":{{\"query\":\"subscription{{streamMessageReceived(streamer:\\\"{_username}\\\"){{__typename}}}}\"}}}}");
             await _socket.SendAsync(new ArraySegment<byte>(messageBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
             ChatId = id;
         }
 
-        private async Task SubscribeChest(string username)
+        private async Task SubscribeChest()
         {
-            string id = $"{username}_chest";
+            string id = $"{_username}_chest";
             byte[] messageBuffer = new byte[512];
 
-            messageBuffer = Encoding.ASCII.GetBytes($"{{\"id\":\"{id}\",\"type\":\"start\",\"payload\":{{\"query\":\"subscription{{treasureChestMessageReceived(streamer:\\\"{username}\\\"){{__typename}}}}\"}}}}");
+            messageBuffer = Encoding.ASCII.GetBytes($"{{\"id\":\"{id}\",\"type\":\"start\",\"payload\":{{\"query\":\"subscription{{treasureChestMessageReceived(streamer:\\\"{_username}\\\"){{__typename}}}}\"}}}}");
             await _socket.SendAsync(new ArraySegment<byte>(messageBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
             ChestId = id;
         }
