@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http.Headers;
 using DSharp.Dlive.Query;
 using GraphQL.Client.Http;
@@ -10,9 +11,11 @@ namespace DSharp.Dlive
         
         public UserQuery Query { get; }
         public Mutation.Mutation Mutation { get; }
-        
+
         public bool IsAuthenticated { get; private set; }
-        
+
+        public event Action<string> OnError;
+
         public string AuthorizationToken
         {
             set
@@ -31,6 +34,12 @@ namespace DSharp.Dlive
         {
             Query = new UserQuery(this);
             Mutation = new Mutation.Mutation(this);
+        }
+
+        public void RaiseError(string message)
+        {
+            OnError?.Invoke(message);
+            Console.Error.WriteLine(message);
         }
     }
 }

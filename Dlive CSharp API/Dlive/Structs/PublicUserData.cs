@@ -7,26 +7,32 @@ namespace DSharp.Dlive
         public string Linoname { get; }
         public string Displayname { get; }
         public PartnerStatus PartnerStatus { get; }
+        public string Effect { get; set; }
         public bool Deactivated { get; }
         public AboutPanel[] Panels { get; }
         public Uri AvatarUri { get; }
         public long NumFollowers { get; }
         public float ChestValue { get; }
-        public long LinoBalance { get; }
-        public long LinoEarnings { get; }
+        [Obsolete("Use LemonBalance instead")]
+        public float LinoBalance { get; }
+        [Obsolete("Use LemonEarnings instead")]
+        public float LinoEarnings { get; }
+        public float LemonBalance { get; }
+        public float LemonEarnings { get; }
 
-        public PublicUserData(string linoname, string displayname, PartnerStatus partnerStatus, bool deactivated, AboutPanel[] panels, Uri avatar, long followerCount, long chest, long balance, long earnings)
+        public PublicUserData(string linoname, string displayname, PartnerStatus partnerStatus, string effect, bool deactivated, AboutPanel[] panels, Uri avatar, long followerCount, long chest, long balance, long earnings)
         {
             Linoname = linoname;
             Displayname = displayname;
             PartnerStatus = partnerStatus;
+            Effect = effect;
             Deactivated = deactivated;
             Panels = panels;
             AvatarUri = avatar;
             NumFollowers = followerCount;
             ChestValue = (float)chest / 100000;
-            LinoBalance = balance;
-            LinoEarnings = earnings;
+            LemonBalance = LinoBalance = (float)balance / 100000;
+            LemonEarnings = LinoEarnings = (float)earnings / 100000;
         }
     }
 }

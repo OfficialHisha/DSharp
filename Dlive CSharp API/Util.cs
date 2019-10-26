@@ -15,7 +15,7 @@ namespace DSharp.Utility
         public static PublicUserData DliveUserObjectToPublicUserData(dynamic userObject)
         {
             Enum.TryParse(userObject.partnerStatus.ToString().ToUpper(), out PartnerStatus partnerStatus);
-            return new PublicUserData(userObject.username.ToString(), userObject.displayname.ToString(), partnerStatus, false, null, new Uri(userObject.avatar.ToString()), -1, -1, -1, -1);
+            return new PublicUserData(userObject.username.ToString(), userObject.displayname.ToString(), partnerStatus, userObject.effect.ToString(), false, null, new Uri(userObject.avatar.ToString()), -1, -1, -1, -1);
         }
 
         public static string DliveUsernameToDisplayName(string username)
@@ -25,7 +25,7 @@ namespace DSharp.Utility
         
         public static string DliveDisplayNameToUsername(string displayName)
         {
-            return PublicQuery.GetPublicInfoByDisplayname(displayName).Linoname;
+            return PublicQuery.GetPublicInfoByDisplayName(displayName).Linoname;
         }
     }
 }

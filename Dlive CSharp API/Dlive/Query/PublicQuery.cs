@@ -1,13 +1,20 @@
-﻿using GraphQL.Client;
+﻿using GraphQL.Client.Http;
 using GraphQL.Common.Response;
+using System;
 
 namespace DSharp.Dlive.Query
 {
     public static class PublicQuery
     {
-        private static GraphQLClient _publicClient = new GraphQLClient(Dlive.QueryEndpoint);
-        
+        private static GraphQLHttpClient _publicClient = new GraphQLHttpClient(Dlive.QueryEndpoint);
+
+        [Obsolete("Use GetPublicInfoByDisplayName instead")]
         public static PublicUserData GetPublicInfoByDisplayname(string displayname)
+        {
+            return GetPublicInfoByDisplayName(displayname);
+        }
+
+        public static PublicUserData GetPublicInfoByDisplayName(string displayname)
         {
             GraphQLResponse response = _publicClient.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.USER_BY_DISPLAYNAME, displayname)).Result;
             

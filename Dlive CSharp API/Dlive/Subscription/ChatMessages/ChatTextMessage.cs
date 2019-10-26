@@ -4,7 +4,7 @@
     {
         public string Content { get; }
         
-        public ChatTextMessage(string channel, string messageId, string content, PublicUserData user) : base(ChatEventType.MESSAGE, channel, messageId, user)
+        public ChatTextMessage(string channel, string messageId, string content, PublicUserData user, RoomRole roomRole) : base(ChatEventType.MESSAGE, channel, messageId, user, roomRole)
         {
             Content = content;
         }

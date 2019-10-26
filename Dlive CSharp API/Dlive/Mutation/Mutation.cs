@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DSharp.Utility;
 using GraphQL.Common.Request;
 using GraphQL.Common.Response;
 
@@ -19,7 +18,7 @@ namespace DSharp.Dlive.Mutation
         public void SendChatMessage(string channelUsername, string message)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -32,14 +31,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while sending chat message: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while sending chat message: {res.Errors[0].Message}");
             }
         }
 
         public void DeleteChatMessage(string channelUsername, string messageId)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -51,14 +50,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while deleting chat message: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while deleting chat message: {res.Errors[0].Message}");
             }
         }
 
         public void AddModerator(string newModeratorUsername)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -70,14 +69,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while adding moderator: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while adding moderator: {res.Errors[0].Message}");
             }
         }
 
         public void RemoveModerator(string moderatorUsername)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -89,14 +88,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while removing moderator: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while removing moderator: {res.Errors[0].Message}");
             }
         }
 
         public void BanUser(string channelUsername, string usernameToBan)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -109,14 +108,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while banning user: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while banning user: {res.Errors[0].Message}");
             }
         }
 
         public void UnbanUser(string streamer, string banUser)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -129,7 +128,7 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while unbanning user: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while unbanning user: {res.Errors[0].Message}");
             }
         }
 
@@ -137,7 +136,7 @@ namespace DSharp.Dlive.Mutation
         public void TimeoutUser(string streamer, string timeoutUser, int seconds)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -150,14 +149,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while setting timeout for user: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while setting timeout for user: {res.Errors[0].Message}");
             }
         }
 
         public void SetChatMode(ChatMode newChatMode)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -169,7 +168,7 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while changing chatmode: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while changing chatmode: {res.Errors[0].Message}");
             }
         }
 
@@ -177,7 +176,7 @@ namespace DSharp.Dlive.Mutation
             bool disallowGlobalEmotes)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -190,14 +189,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while changing emoteMode: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while changing emoteMode: {res.Errors[0].Message}");
             }
         }
 
         public void SetChatCooldown(int cooldownSeconds)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -209,14 +208,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while changing chat cooldown: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while changing chat cooldown: {res.Errors[0].Message}");
             }
         }
 
         public void AddFilterWord(string word)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -228,14 +227,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while adding filtered word: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while adding filtered word: {res.Errors[0].Message}");
             }
         }
 
         public void RemoveFilterWord(string word)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -247,14 +246,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while removing filtered word: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while removing filtered word: {res.Errors[0].Message}");
             }
         }
 
         public void BanEmote(string streamer, string emoteString)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -267,14 +266,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while banning emote: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while banning emote: {res.Errors[0].Message}");
             }
         }
 
         public void UnbanEmote(string streamer, string emoteString)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -287,14 +286,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while unbanning emote: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while unbanning emote: {res.Errors[0].Message}");
             }
         }
 
         public void SetSubSettings(string badgeText, string badgeColor, string textColor, string[] benefits)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -307,14 +306,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while setting sub settings: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while setting sub settings: {res.Errors[0].Message}");
             }
         }
 
         public void OpenChest()
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -326,14 +325,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while opening chest: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while opening chest: {res.Errors[0].Message}");
             }
         }
 
         public void ClaimChest(string streamer)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -345,14 +344,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while claiming chest: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while claiming chest: {res.Errors[0].Message}");
             }
         }
 
         public void Follow(string streamer)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -364,14 +363,14 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while following user: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while following user: {res.Errors[0].Message}");
             }
         }
 
         public void Unfollow(string streamer)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -383,7 +382,7 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while unfollowing user: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while unfollowing user: {res.Errors[0].Message}");
             }
         }
 
@@ -391,7 +390,7 @@ namespace DSharp.Dlive.Mutation
             Uri image = null, Uri imageDestination = null, AboutPanelType type = AboutPanelType.DEFAULT)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -403,7 +402,7 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while creating a new panel: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while creating a new panel: {res.Errors[0].Message}");
             }
 
             UpdateAboutPanel(new AboutPanel(int.Parse(res.Data.panelAdd.panel.id.ToString()), type, title, content,
@@ -413,7 +412,7 @@ namespace DSharp.Dlive.Mutation
         public void AddAboutPanel(AboutPanel panel)
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException(
+                _account.RaiseError(
                     "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
 
             GraphQLRequest _req = new GraphQLRequest
@@ -426,7 +425,7 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while creating a new panel: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while creating a new panel: {res.Errors[0].Message}");
             }
 
             UpdateAboutPanel(new AboutPanel(int.Parse(res.Data.panel.id.ToString()), panel.PanelType, panel.PanelTitle,
@@ -445,7 +444,7 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while updating panel: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while updating panel: {res.Errors[0].Message}");
             }
         }
 
@@ -460,7 +459,7 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while deleting panel: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while deleting panel: {res.Errors[0].Message}");
             }
         }
 
@@ -475,7 +474,7 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while deliting panel: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while deliting panel: {res.Errors[0].Message}");
             }
         }
 
@@ -490,7 +489,7 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while updating panel order: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while updating panel order: {res.Errors[0].Message}");
             }
         }
 
@@ -512,7 +511,7 @@ namespace DSharp.Dlive.Mutation
 
             if (res.Errors != null)
             {
-                throw new Exception($"An error occured while updating panel order: {res.Errors[0].Message}");
+                _account.RaiseError($"An error occured while updating panel order: {res.Errors[0].Message}");
             }
         }
     }

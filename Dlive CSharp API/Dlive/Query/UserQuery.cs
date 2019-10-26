@@ -14,7 +14,7 @@ namespace DSharp.Dlive.Query
         public UserData GetMyInfo()
         {
             if (!_account.IsAuthenticated)
-                throw new AuthorizationException("Authentication is required to use this query. Set the Dlive.AuthorizationToken property with your user token to authenticate");
+                _account.RaiseError("Authentication is required to use this query. Set the Dlive.AuthorizationToken property with your user token to authenticate");
 
             GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.ME)).Result;
 

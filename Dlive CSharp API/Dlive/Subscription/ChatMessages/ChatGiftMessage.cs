@@ -1,13 +1,17 @@
-﻿namespace DSharp.Dlive.Subscription.Chat
+﻿using System;
+
+namespace DSharp.Dlive.Subscription.Chat
 {
     public class ChatGiftMessage : UserChatMessage
     {
         public GiftType GiftType { get; }
+        [Obsolete("Use GiftLemonValue instead")]
         public int GiftLinoValue { get; }
+        public int GiftLemonValue { get; }
         public int AmountGifts { get; }
         public string GiftMessage { get; }
 
-        public ChatGiftMessage(string channel, string messageId, GiftType type, int amount, string message, PublicUserData user) : base(ChatEventType.GIFT, channel, messageId, user)
+        public ChatGiftMessage(string channel, string messageId, GiftType type, int amount, string message, PublicUserData user, RoomRole roomRole) : base(ChatEventType.GIFT, channel, messageId, user, roomRole)
         {
             GiftType = type;
             GiftMessage = message;
@@ -16,24 +20,25 @@
             switch (type)
             {
                 case GiftType.LEMON:
-                    GiftLinoValue = 1;
+                    GiftLemonValue = 1;
                     break;
                 case GiftType.ICE_CREAM:
-                    GiftLinoValue = 10;
+                    GiftLemonValue = 10;
                     break;
                 case GiftType.DIAMOND:
-                    GiftLinoValue = 100;
+                    GiftLemonValue = 100;
                     break;
                 case GiftType.NINJAGHINI:
-                    GiftLinoValue = 1000;
+                    GiftLemonValue = 1000;
                     break;
                 case GiftType.NINJET:
-                    GiftLinoValue = 10000;
+                    GiftLemonValue = 10000;
                     break;
                 default:
                     break;
             }
-            GiftLinoValue *= amount;
+            GiftLemonValue *= amount;
+            GiftLinoValue = GiftLemonValue;
         }
     }
 }

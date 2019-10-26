@@ -3,11 +3,9 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DSharp.Dlive.Query;
 using Newtonsoft.Json;
 using DSharp.Dlive.Subscription.Chat;
 using DSharp.Dlive.Subscription.Chest;
-using DSharp.Subscription;
 using DSharp.Utility;
 
 namespace DSharp.Dlive.Subscription
@@ -26,7 +24,7 @@ namespace DSharp.Dlive.Subscription
         public string ChatId { get; private set; }
         public string ChestId { get; private set; }
 
-        private string _username;
+        private readonly string _username;
 
         private CancellationTokenSource _cancellationToken = new CancellationTokenSource();
 
@@ -36,6 +34,7 @@ namespace DSharp.Dlive.Subscription
 
         public Subscription(string streamerUsername, SubscriptionType subscriptionType = SubscriptionType.CHAT)
         {
+            Type = subscriptionType;
             _socket.Options.AddSubProtocol("graphql-ws");
             _username = streamerUsername;
         }
@@ -69,7 +68,7 @@ namespace DSharp.Dlive.Subscription
                 string error = response.payload.message.ToString();
                 _socket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, error, CancellationToken.None).Wait();
                 OnError?.Invoke(error);
-                throw new WebSocketConnectionRefusedException($"The connection was refused by remote host with reason: {error}");
+                Console.Error.WriteLine($"The connection was refused by remote host with reason: {error}");
             }
 
             Receive().ConfigureAwait(false);
@@ -163,6 +162,7 @@ namespace DSharp.Dlive.Subscription
         private void BuildChatMessage(string channel, dynamic data)
         {
             Enum.TryParse(data[0].type.ToString().ToUpper(), out ChatEventType type);
+            Enum.TryParse(data[0].roomRole.ToString().ToUpper(), out RoomRole roomRole);
 
             #if DEBUG
                 Console.WriteLine(data[0].type.ToString());
@@ -171,50 +171,49 @@ namespace DSharp.Dlive.Subscription
             switch (type)
             {
                 case ChatEventType.MESSAGE:
-                    OnChatEvent?.Invoke(new ChatTextMessage(channel, data[0].id.ToString(), data[0].content.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatTextMessage(channel, data[0].id.ToString(), data[0].content.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
                     break;
                 case ChatEventType.GIFT:
                     Enum.TryParse(data[0].gift.ToString(), out GiftType giftType);
-                    OnChatEvent?.Invoke(new ChatGiftMessage(channel, data[0].id.ToString(), giftType, int.Parse(data[0].amount.ToString()), data[0].message.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatGiftMessage(channel, data[0].id.ToString(), giftType, int.Parse(data[0].amount.ToString()), data[0].message.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
                     break;
                 case ChatEventType.SUBSCRIPTION:
-                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(channel, data[0].id.ToString(), int.Parse(data[0].month.ToString()), Util.DliveUserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(channel, data[0].id.ToString(), int.Parse(data[0].month.ToString()), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
                     break;
                 case ChatEventType.HOST:
-                    OnChatEvent?.Invoke(new ChatHostMessage(channel, data[0].id.ToString(), int.Parse(data[0].viewer.ToString()), Util.DliveUserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatHostMessage(channel, data[0].id.ToString(), int.Parse(data[0].viewer.ToString()), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
                     break;
                 case ChatEventType.CHAT_MODE:
                     Enum.TryParse(data[0].mode.ToString(), out ChatMode mode);
-                    OnChatEvent?.Invoke(new ChatModeChangeMessage(channel, data[0].id.ToString(), mode, Util.DliveUserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatModeChangeMessage(channel, data[0].id.ToString(), mode, Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
                     break;
                 case ChatEventType.BAN:
-                    OnChatEvent?.Invoke(new ChatBanMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), Util.DliveUserObjectToPublicUserData(data[0].bannedBy)));
+                    Enum.TryParse(data[0].bannedByRoomRoleToString().ToUpper(), out RoomRole bannedByRoomRole);
+                    OnChatEvent?.Invoke(new ChatBanMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, Util.DliveUserObjectToPublicUserData(data[0].bannedBy), bannedByRoomRole));
                     break;
                 case ChatEventType.MOD:
                     ModeratorStatusChange change = bool.Parse(data[0].add.ToString()) ? ModeratorStatusChange.PROMOTED : ModeratorStatusChange.DEMOTED;
-                    OnChatEvent?.Invoke(new ChatModStatusChangeMessage(channel, data[0].id.ToString(), change, Util.DliveUserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatModStatusChangeMessage(channel, data[0].id.ToString(), change, Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
                     break;
                 case ChatEventType.EMOTE:
-                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(channel, data[0].id.ToString(), data[0].emote.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender)));
+                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(channel, data[0].id.ToString(), data[0].emote.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
                     break;
                 case ChatEventType.TIMEOUT:
-                    OnChatEvent?.Invoke(new ChatTimeoutMessage(channel, data[0].id.ToString(), int.Parse(data[0].minute.ToString()), Util.DliveUserObjectToPublicUserData(data[0].sender), Util.DliveUserObjectToPublicUserData(data[0].bannedBy)));
+                    Enum.TryParse(data[0].bannedByRoomRoleToString().ToUpper(), out RoomRole timedoutByRoomRole);
+                    OnChatEvent?.Invoke(new ChatTimeoutMessage(channel, data[0].id.ToString(), int.Parse(data[0].minute.ToString()), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, Util.DliveUserObjectToPublicUserData(data[0].bannedBy), timedoutByRoomRole));
                     break;
                 case ChatEventType.CLIP:
-                    OnChatEvent?.Invoke(new ChatClipMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), new Uri($"https://dlive.tv/clip/{data[0].url.ToString()}")));
+                    OnChatEvent?.Invoke(new ChatClipMessage(channel, data[0].id.ToString(), new Uri($"https://dlive.tv/clip/{data[0].url.ToString()}"), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
                     break;
                 case ChatEventType.GIFTSUB:
-                    Console.WriteLine(data[0]);
-                    int months;
-
-                    if (!int.TryParse(data[0].count.ToString(), out months))
+                    if (!int.TryParse(data[0].count.ToString(), out int months))
                         months = 1;
 
-                    OnChatEvent?.Invoke(new ChatGiftSubscriptionMessage(channel, data[0].id.ToString(), months, Util.DliveUserObjectToPublicUserData(data[0].sender), Util.DliveUserObjectToPublicUserData(data[0].receiver)));
+                    OnChatEvent?.Invoke(new ChatGiftSubscriptionMessage(channel, data[0].id.ToString(), months, Util.DliveUserObjectToPublicUserData(data[0].sender), Util.DliveUserObjectToPublicUserData(data[0].receiver), roomRole));
                     break;
                 default:
                     object user = data[0].sender;
-                    OnChatEvent?.Invoke(user != null ? new UserChatMessage(type, channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender)): new ChatMessage(type, channel, data[0].id.ToString()));
+                    OnChatEvent?.Invoke(user != null ? new UserChatMessage(type, channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole): new ChatMessage(type, channel, data[0].id.ToString()));
                     break;
             }
         }
