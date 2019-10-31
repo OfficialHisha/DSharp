@@ -10,6 +10,7 @@ namespace DSharp.Dlive.Query
         public string displayname;
         public PartnerStatus partnerStatus;
         public string effect;
+        public Badge[] badges;
         public bool deactivated;
         public Uri avatar;
         public JObject followers;
@@ -27,7 +28,7 @@ namespace DSharp.Dlive.Query
                 actualPanels.Add(panel.ToAboutPanel());
             }
                 
-            PublicUserData publicData = new PublicUserData(username, displayname, partnerStatus, effect, deactivated, actualPanels.ToArray(), avatar, (long)followers["totalCount"],
+            PublicUserData publicData = new PublicUserData(username, displayname, partnerStatus, effect, badges, deactivated, actualPanels.ToArray(), avatar, (long)followers["totalCount"],
                 (long)treasureChest["value"], (long)wallet["balance"], (long)wallet["totalEarning"]);
             PrivateUserData privateData = new PrivateUserData((long) @private.subscribers["totalCount"],
                 @private.email, @private.filterWords, @private.streamKey["key"].ToString());
@@ -42,7 +43,7 @@ namespace DSharp.Dlive.Query
             {
                 actualPanels.Add(panel.ToAboutPanel());
             }
-            return new PublicUserData(username, displayname, partnerStatus, effect, deactivated, actualPanels.ToArray(), avatar, (long)followers["totalCount"],
+            return new PublicUserData(username, displayname, partnerStatus, effect, badges, deactivated, actualPanels.ToArray(), avatar, (long)followers["totalCount"],
                 (long)treasureChest["value"], (long)wallet["balance"], (long)wallet["totalEarning"]);
         }
     }

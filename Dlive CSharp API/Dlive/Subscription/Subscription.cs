@@ -166,26 +166,27 @@ namespace DSharp.Dlive.Subscription
 
             #if DEBUG
                 Console.WriteLine(data[0].type.ToString());
+                Console.WriteLine(data[0].ToString());
             #endif
-            
+
             switch (type)
             {
                 case ChatEventType.MESSAGE:
-                    OnChatEvent?.Invoke(new ChatTextMessage(channel, data[0].id.ToString(), data[0].content.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
+                    OnChatEvent?.Invoke(new ChatTextMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), data[0].content.ToString(), (long)data[0].subLength.ToString));
                     break;
                 case ChatEventType.GIFT:
                     Enum.TryParse(data[0].gift.ToString(), out GiftType giftType);
-                    OnChatEvent?.Invoke(new ChatGiftMessage(channel, data[0].id.ToString(), giftType, int.Parse(data[0].amount.ToString()), data[0].message.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
+                    OnChatEvent?.Invoke(new ChatGiftMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), giftType, int.Parse(data[0].amount.ToString()), data[0].message.ToString()));
                     break;
                 case ChatEventType.SUBSCRIPTION:
-                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(channel, data[0].id.ToString(), int.Parse(data[0].month.ToString()), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
+                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), int.Parse(data[0].month.ToString())));
                     break;
                 case ChatEventType.HOST:
-                    OnChatEvent?.Invoke(new ChatHostMessage(channel, data[0].id.ToString(), int.Parse(data[0].viewer.ToString()), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
+                    OnChatEvent?.Invoke(new ChatHostMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), int.Parse(data[0].viewer.ToString())));
                     break;
                 case ChatEventType.CHAT_MODE:
                     Enum.TryParse(data[0].mode.ToString(), out ChatMode mode);
-                    OnChatEvent?.Invoke(new ChatModeChangeMessage(channel, data[0].id.ToString(), mode, Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
+                    OnChatEvent?.Invoke(new ChatModeChangeMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), mode));
                     break;
                 case ChatEventType.BAN:
                     Enum.TryParse(data[0].bannedByRoomRoleToString().ToUpper(), out RoomRole bannedByRoomRole);
@@ -193,17 +194,17 @@ namespace DSharp.Dlive.Subscription
                     break;
                 case ChatEventType.MOD:
                     ModeratorStatusChange change = bool.Parse(data[0].add.ToString()) ? ModeratorStatusChange.PROMOTED : ModeratorStatusChange.DEMOTED;
-                    OnChatEvent?.Invoke(new ChatModStatusChangeMessage(channel, data[0].id.ToString(), change, Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
+                    OnChatEvent?.Invoke(new ChatModStatusChangeMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), change));
                     break;
                 case ChatEventType.EMOTE:
-                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(channel, data[0].id.ToString(), data[0].emote.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
+                    OnChatEvent?.Invoke(new ChatEmoteMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), data[0].emote.ToString()));
                     break;
                 case ChatEventType.TIMEOUT:
                     Enum.TryParse(data[0].bannedByRoomRoleToString().ToUpper(), out RoomRole timedoutByRoomRole);
                     OnChatEvent?.Invoke(new ChatTimeoutMessage(channel, data[0].id.ToString(), int.Parse(data[0].minute.ToString()), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, Util.DliveUserObjectToPublicUserData(data[0].bannedBy), timedoutByRoomRole));
                     break;
                 case ChatEventType.CLIP:
-                    OnChatEvent?.Invoke(new ChatClipMessage(channel, data[0].id.ToString(), new Uri($"https://dlive.tv/clip/{data[0].url.ToString()}"), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole));
+                    OnChatEvent?.Invoke(new ChatClipMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), new Uri($"https://dlive.tv/clip/{data[0].url.ToString()}")));
                     break;
                 case ChatEventType.GIFTSUB:
                     if (!int.TryParse(data[0].count.ToString(), out int months))
@@ -213,7 +214,7 @@ namespace DSharp.Dlive.Subscription
                     break;
                 default:
                     object user = data[0].sender;
-                    OnChatEvent?.Invoke(user != null ? new UserChatMessage(type, channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole): new ChatMessage(type, channel, data[0].id.ToString()));
+                    OnChatEvent?.Invoke(user != null ? new UserChatMessage(type, channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString()): new ChatMessage(type, channel, data[0].id.ToString()));
                     break;
             }
         }

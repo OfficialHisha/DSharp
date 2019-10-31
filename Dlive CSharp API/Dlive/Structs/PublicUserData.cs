@@ -7,7 +7,8 @@ namespace DSharp.Dlive
         public string Linoname { get; }
         public string Displayname { get; }
         public PartnerStatus PartnerStatus { get; }
-        public string Effect { get; set; }
+        public string Effect { get; }
+        public Badge[] Badges { get; }
         public bool Deactivated { get; }
         public AboutPanel[] Panels { get; }
         public Uri AvatarUri { get; }
@@ -20,12 +21,13 @@ namespace DSharp.Dlive
         public float LemonBalance { get; }
         public float LemonEarnings { get; }
 
-        public PublicUserData(string linoname, string displayname, PartnerStatus partnerStatus, string effect, bool deactivated, AboutPanel[] panels, Uri avatar, long followerCount, long chest, long balance, long earnings)
+        public PublicUserData(string linoname, string displayname, PartnerStatus partnerStatus, string effect, Badge[] badges, bool deactivated, AboutPanel[] panels, Uri avatar, long followerCount, long chest, long balance, long earnings)
         {
             Linoname = linoname;
             Displayname = displayname;
             PartnerStatus = partnerStatus;
             Effect = effect;
+            Badges = badges;
             Deactivated = deactivated;
             Panels = panels;
             AvatarUri = avatar;

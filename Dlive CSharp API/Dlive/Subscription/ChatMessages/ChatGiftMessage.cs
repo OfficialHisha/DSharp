@@ -11,7 +11,7 @@ namespace DSharp.Dlive.Subscription.Chat
         public int AmountGifts { get; }
         public string GiftMessage { get; }
 
-        public ChatGiftMessage(string channel, string messageId, GiftType type, int amount, string message, PublicUserData user, RoomRole roomRole) : base(ChatEventType.GIFT, channel, messageId, user, roomRole)
+        public ChatGiftMessage(string channel, string messageId, PublicUserData user, RoomRole roomRole, bool subscribing, GiftType type, int amount, string message) : base(ChatEventType.GIFT, channel, messageId, user, roomRole, subscribing)
         {
             GiftType = type;
             GiftMessage = message;

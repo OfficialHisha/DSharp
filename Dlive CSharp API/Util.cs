@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DSharp.Dlive;
 using DSharp.Dlive.Query;
 
@@ -15,7 +16,15 @@ namespace DSharp.Utility
         public static PublicUserData DliveUserObjectToPublicUserData(dynamic userObject)
         {
             Enum.TryParse(userObject.partnerStatus.ToString().ToUpper(), out PartnerStatus partnerStatus);
-            return new PublicUserData(userObject.username.ToString(), userObject.displayname.ToString(), partnerStatus, userObject.effect.ToString(), false, null, new Uri(userObject.avatar.ToString()), -1, -1, -1, -1);
+
+            List<Badge> badges = new List<Badge>();
+            foreach (dynamic badgeObject in userObject.badges)
+            {
+                Enum.TryParse(badgeObject.ToString().ToUpper(), out Badge badge);
+                badges.Add(badge);
+            }
+
+            return new PublicUserData(userObject.username.ToString(), userObject.displayname.ToString(), partnerStatus, userObject.effect.ToString(), badges.ToArray(), false, null, new Uri(userObject.avatar.ToString()), -1, -1, -1, -1);
         }
 
         public static string DliveUsernameToDisplayName(string username)

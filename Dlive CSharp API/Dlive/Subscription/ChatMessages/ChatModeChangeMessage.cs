@@ -4,7 +4,7 @@
     {
         public ChatMode NewMode { get; }
         
-        public ChatModeChangeMessage(string channel, string messageId, ChatMode mode, PublicUserData user, RoomRole roomRole) : base(ChatEventType.CHAT_MODE, channel, messageId, user, roomRole)
+        public ChatModeChangeMessage(string channel, string messageId, PublicUserData user, RoomRole roomRole, bool subscribing, ChatMode mode) : base(ChatEventType.CHAT_MODE, channel, messageId, user, roomRole, subscribing)
         {
             NewMode = mode;
         }

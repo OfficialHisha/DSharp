@@ -9,6 +9,7 @@
         OFFLINE,
         FOLLOW,
         SUBSCRIPTION,
+        SUBSTREAK,// TODO:
         GIFTSUB,// TODO:
         DELETE,
         HOST,
