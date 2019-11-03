@@ -71,7 +71,7 @@ namespace DSharp.Dlive.Subscription
                 Console.Error.WriteLine($"The connection was refused by remote host with reason: {error}");
             }
 
-            Receive().ConfigureAwait(false);
+            Receive();
             IsConnected = true;
             _isAlive = true;
 
@@ -92,30 +92,30 @@ namespace DSharp.Dlive.Subscription
             }
 
             OnConnected?.Invoke();
+            KeepAliveCheck();
         }
 
         private async Task KeepAliveCheck()
         {
-            // Currently unused
             do
             {
-                await Task.Delay(2000);
-
-                Console.WriteLine($"Keep alive check: {_isAlive}");
+                await Task.Delay(25000);
 
                 if (!_isAlive)
                 {
-                    Console.WriteLine("Connection lost");
+                    Console.Error.WriteLine("Lost connection to remote host");
                     OnError?.Invoke("Lost connection to remote host");
-                    Disconnect("Lost connection to remote host");
-                    Connect();
+                    OnDisconnected?.Invoke("Lost connection to remote host");
+                    IsConnected = false;
+                    //Disconnect("Lost connection to remote host");
+                    //Connect();
                 }
 
                 _isAlive = false;
             } while (IsConnected);
         }
         
-         private void Disconnect(string reason)
+        private void Disconnect(string reason)
         {
             // Currently unused
             _cancellationToken.Cancel();
@@ -132,7 +132,7 @@ namespace DSharp.Dlive.Subscription
                 byte[] messageBuffer = new byte[4096];
                 await _socket.ReceiveAsync(new ArraySegment<byte>(messageBuffer), _cancellationToken.Token);
                 string debug = Encoding.ASCII.GetString(messageBuffer);// Sometimes we get an unreadable message?
-                Task.Run(() => ParseMessage(JsonConvert.DeserializeObject(debug))).ConfigureAwait(false);
+                Task.Run(() => ParseMessage(JsonConvert.DeserializeObject(debug)));
             } while (IsConnected);
         }
 
@@ -172,21 +172,21 @@ namespace DSharp.Dlive.Subscription
             switch (type)
             {
                 case ChatEventType.MESSAGE:
-                    OnChatEvent?.Invoke(new ChatTextMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), data[0].content.ToString(), (long)data[0].subLength.ToString));
+                    OnChatEvent?.Invoke(new ChatTextMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, bool.Parse(data[0].subscribing.ToString()), data[0].content.ToString(), long.Parse(data[0].subLength.ToString())));
                     break;
                 case ChatEventType.GIFT:
                     Enum.TryParse(data[0].gift.ToString(), out GiftType giftType);
-                    OnChatEvent?.Invoke(new ChatGiftMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), giftType, int.Parse(data[0].amount.ToString()), data[0].message.ToString()));
+                    OnChatEvent?.Invoke(new ChatGiftMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, bool.Parse(data[0].subscribing.ToString()), giftType, int.Parse(data[0].amount.ToString()), data[0].message.ToString()));
                     break;
                 case ChatEventType.SUBSCRIPTION:
-                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), int.Parse(data[0].month.ToString())));
+                    OnChatEvent?.Invoke(new ChatSubscriptionMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, bool.Parse(data[0].subscribing.ToString()), int.Parse(data[0].month.ToString())));
                     break;
                 case ChatEventType.HOST:
-                    OnChatEvent?.Invoke(new ChatHostMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), int.Parse(data[0].viewer.ToString())));
+                    OnChatEvent?.Invoke(new ChatHostMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, bool.Parse(data[0].subscribing.ToString()), int.Parse(data[0].viewer.ToString())));
                     break;
                 case ChatEventType.CHAT_MODE:
                     Enum.TryParse(data[0].mode.ToString(), out ChatMode mode);
-                    OnChatEvent?.Invoke(new ChatModeChangeMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), mode));
+                    OnChatEvent?.Invoke(new ChatModeChangeMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, bool.Parse(data[0].subscribing.ToString()), mode));
                     break;
                 case ChatEventType.BAN:
                     Enum.TryParse(data[0].bannedByRoomRoleToString().ToUpper(), out RoomRole bannedByRoomRole);
@@ -194,17 +194,17 @@ namespace DSharp.Dlive.Subscription
                     break;
                 case ChatEventType.MOD:
                     ModeratorStatusChange change = bool.Parse(data[0].add.ToString()) ? ModeratorStatusChange.PROMOTED : ModeratorStatusChange.DEMOTED;
-                    OnChatEvent?.Invoke(new ChatModStatusChangeMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), change));
+                    OnChatEvent?.Invoke(new ChatModStatusChangeMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, bool.Parse(data[0].subscribing.ToString()), change));
                     break;
                 case ChatEventType.EMOTE:
-                    OnChatEvent?.Invoke(new ChatEmoteMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), data[0].emote.ToString()));
+                    OnChatEvent?.Invoke(new ChatEmoteMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, bool.Parse(data[0].subscribing.ToString()), data[0].emote.ToString()));
                     break;
                 case ChatEventType.TIMEOUT:
                     Enum.TryParse(data[0].bannedByRoomRoleToString().ToUpper(), out RoomRole timedoutByRoomRole);
                     OnChatEvent?.Invoke(new ChatTimeoutMessage(channel, data[0].id.ToString(), int.Parse(data[0].minute.ToString()), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, Util.DliveUserObjectToPublicUserData(data[0].bannedBy), timedoutByRoomRole));
                     break;
                 case ChatEventType.CLIP:
-                    OnChatEvent?.Invoke(new ChatClipMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString(), new Uri($"https://dlive.tv/clip/{data[0].url.ToString()}")));
+                    OnChatEvent?.Invoke(new ChatClipMessage(channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, bool.Parse(data[0].subscribing.ToString()), new Uri($"https://dlive.tv/clip/{data[0].url.ToString()}")));
                     break;
                 case ChatEventType.GIFTSUB:
                     if (!int.TryParse(data[0].count.ToString(), out int months))
