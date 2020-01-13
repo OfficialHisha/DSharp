@@ -14,8 +14,17 @@ namespace DSharp.Dlive.Query
         public UserData GetMyInfo()
         {
             if (!_account.IsAuthenticated)
+            {
                 _account.RaiseError("Authentication is required to use this query. Set the Dlive.AuthorizationToken property with your user token to authenticate");
+                return new UserData();
+            }
 
+            if (!Dlive.CanExecuteQuery())
+            {
+                _account.RaiseError("Rate limit reached");
+                return new UserData();
+            }
+            
             GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.ME)).Result;
 
             RawUserData userData = response.GetDataFieldAs<RawUserData>("me");
@@ -25,7 +34,13 @@ namespace DSharp.Dlive.Query
 
         public PublicUserData GetPublicInfoByDisplayName(string displayName)
         {
-            GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.USER_BY_DISPLAYNAME, displayName)).Result;
+            if (!Dlive.CanExecuteQuery())
+            {
+                _account.RaiseError("Rate limit reached");
+                return new PublicUserData();
+            }
+            
+            GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.USER_BY_DISPLAYNAME, new [] {displayName})).Result;
             
             RawUserData userData = response.GetDataFieldAs<RawUserData>("userByDisplayName");
 
@@ -34,7 +49,13 @@ namespace DSharp.Dlive.Query
         
         public PublicUserData GetPublicInfo(string username)
         {
-            GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.USER, username)).Result;
+            if (!Dlive.CanExecuteQuery())
+            {
+                _account.RaiseError("Rate limit reached");
+                return new PublicUserData();
+            }
+            
+            GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.USER, new [] {username})).Result;
             
             RawUserData userData = response.GetDataFieldAs<RawUserData>("user");
 

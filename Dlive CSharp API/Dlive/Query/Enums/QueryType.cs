@@ -4,6 +4,8 @@ namespace DSharp.Dlive.Query
     {
         ME,
         USER,
-        USER_BY_DISPLAYNAME
+        USER_BY_DISPLAYNAME,
+        FOLLOWERS,
+        REPLAYS
     }
 }

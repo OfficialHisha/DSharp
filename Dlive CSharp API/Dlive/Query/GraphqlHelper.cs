@@ -5,7 +5,7 @@ namespace DSharp.Dlive.Query
 {
     public static class GraphqlHelper
     {
-        public static string GetQueryString(QueryType queryType, string data = "")
+        public static string GetQueryString(QueryType queryType, string[] data = null)
         {
             switch (queryType)
             {
@@ -47,7 +47,7 @@ namespace DSharp.Dlive.Query
                 case QueryType.USER:
                     StringBuilder user = new StringBuilder();
                     user.Append("query{");
-                    user.Append($"user(username:\"{data}\") {{");
+                    user.Append($"user(username:\"{data[0]}\") {{");
                     user.Append(@"username
                         displayname
                         avatar
@@ -75,7 +75,7 @@ namespace DSharp.Dlive.Query
                 case QueryType.USER_BY_DISPLAYNAME:
                     StringBuilder userByDisplayname = new StringBuilder();
                     userByDisplayname.Append("query{");
-                    userByDisplayname.Append($"userByDisplayName(displayname:\"{data}\") {{");
+                    userByDisplayname.Append($"userByDisplayName(displayname:\"{data[0]}\") {{");
                     userByDisplayname.Append(@"username
                         displayname
                         avatar
@@ -100,6 +100,39 @@ namespace DSharp.Dlive.Query
                             value
                         }}}");
                     return userByDisplayname.ToString();
+                case QueryType.FOLLOWERS:
+                    StringBuilder followers = new StringBuilder();
+                    followers.Append("query{");
+                    followers.Append($"userByDisplayName(displayname:\"{data[0]}\") {{");
+                    followers.Append($"followers (first: {data[1]}, after: \"{data[2]}\") {{");
+                    followers.Append(@"totalCount
+                        list {
+                            username
+                            displayname
+                            avatar
+                            partnerStatus
+                            deactivated
+                            panels {
+                                id
+                                type
+                                title
+                                imageURL
+                                imageLinkURL
+                                body
+                            }
+                            followers {
+                                totalCount
+                            }
+                            wallet {
+                                totalEarning
+                                balance
+                            }
+                            treasureChest {
+                                value
+                            }}}}");
+                    return followers.ToString();
+                case QueryType.REPLAYS:
+                    return "";
                 default:
                     throw new InvalidEnumArgumentException($"Invalid query type provided ({nameof(queryType)})");
             }
