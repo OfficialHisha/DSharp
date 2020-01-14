@@ -370,6 +370,29 @@ namespace DSharp.Dlive.Mutation
             }
         }
 
+        public void AddChestValue(int amountToAdd)
+        {
+            if (!_account.IsAuthenticated)
+                _account.RaiseError(
+                    "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
+
+            GraphQLRequest _req = new GraphQLRequest
+            {
+                Query = $"mutation{{treasureChestUserTransfer(amount:\"{amountToAdd}\") {{ err {{ message }}}}}}"
+            };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
+            GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
+
+            if (res.Errors != null)
+            {
+                _account.RaiseError($"An error occured while adding value to chest: {res.Errors[0].Message}");
+            }
+        }
+
         public void OpenChest()
         {
             if (!_account.IsAuthenticated)
