@@ -5,6 +5,7 @@
         UNKNOWN,
         GIVEAWAYSTARTED,
         GIVEAWAYENDED,
+        READYTOCOLLECT,
         VALUEEXPIRED,
         VALUEUPDATED
     }

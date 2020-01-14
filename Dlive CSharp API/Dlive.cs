@@ -4,9 +4,9 @@ namespace DSharp.Dlive
 {
     public static class Dlive
     {
-        public static bool EnableRateLimiter { get; set; }
-        
-        private static DateTime currentIntervalStart;
+        public static bool EnableRateLimiter { get; set; } = false;
+
+        public static DateTime NextIntervalReset { get; private set; } = DateTime.Now.AddMinutes(5);
         private static int currentIntervalQueries;
         
         public static Uri QueryEndpoint { get; } = new Uri("https://graphigo.prd.dlive.tv/");
@@ -14,15 +14,21 @@ namespace DSharp.Dlive
 
         public static bool CanExecuteQuery()
         {
-            TimeSpan ts = new TimeSpan(0, 0, 5, 0);
+            if (!EnableRateLimiter)
+                return true;
             
-            if (DateTime.Now > currentIntervalStart + ts)
+            if (DateTime.Now > NextIntervalReset)
             {
-                currentIntervalStart = DateTime.Now;
+                NextIntervalReset = DateTime.Now.AddMinutes(5);
                 currentIntervalQueries = 0;
             }
 
             return currentIntervalQueries < 5000;
+        }
+
+        public static void IncreaseQueryCounter()
+        {
+            currentIntervalQueries++;
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using GraphQL.Common.Response;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using GraphQL.Common.Response;
 
 namespace DSharp.Dlive.Query
 {
@@ -20,11 +23,9 @@ namespace DSharp.Dlive.Query
             }
 
             if (!Dlive.CanExecuteQuery())
-            {
-                _account.RaiseError("Rate limit reached");
-                return new UserData();
-            }
-            
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.ME)).Result;
 
             RawUserData userData = response.GetDataFieldAs<RawUserData>("me");
@@ -35,11 +36,9 @@ namespace DSharp.Dlive.Query
         public PublicUserData GetPublicInfoByDisplayName(string displayName)
         {
             if (!Dlive.CanExecuteQuery())
-            {
-                _account.RaiseError("Rate limit reached");
-                return new PublicUserData();
-            }
-            
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.USER_BY_DISPLAYNAME, new [] {displayName})).Result;
             
             RawUserData userData = response.GetDataFieldAs<RawUserData>("userByDisplayName");
@@ -50,16 +49,51 @@ namespace DSharp.Dlive.Query
         public PublicUserData GetPublicInfo(string username)
         {
             if (!Dlive.CanExecuteQuery())
-            {
-                _account.RaiseError("Rate limit reached");
-                return new PublicUserData();
-            }
-            
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.USER, new [] {username})).Result;
             
             RawUserData userData = response.GetDataFieldAs<RawUserData>("user");
 
             return userData.ToPublicUserData();
+        }
+
+        /// <summary>
+        /// This method might take some time to complete depending on the number of followers and other queries
+        /// that are sent while it's running.
+        /// </summary>
+        /// <param name="user">The user object of the user you want to fetch followers from</param>
+        /// <returns>An array of public user data objects, one for each follower</returns>
+        public async Task<PublicUserData[]> GetFollowersForUser(PublicUserData user)
+        {
+            //followers (first = amount of followers to fetch, after = start after this NUMBER)
+            int cursor = 0;
+
+            List<PublicUserData> followers = new List<PublicUserData>();
+
+            while (cursor < user.NumFollowers)
+            {
+                if (!Dlive.CanExecuteQuery())
+                    await Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds);
+                Dlive.IncreaseQueryCounter();
+
+                GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.FOLLOWERS,
+                    new string[] { user.Linoname, "50", cursor.ToString() })).Result;
+
+                RawUserData[] userData = response.GetDataFieldAs<RawUserData[]>("user.followers.list");
+
+
+                foreach (RawUserData rawuserData in userData)
+                {
+                    followers.Add(rawuserData.ToPublicUserData());
+                }
+
+                cursor += 50;
+                await Task.Delay(1000);
+            }
+            
+            return followers.ToArray();
         }
     }
 }

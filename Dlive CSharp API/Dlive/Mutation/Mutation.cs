@@ -27,8 +27,12 @@ namespace DSharp.Dlive.Mutation
                     $"mutation{{sendStreamchatMessage(input:{{ streamer: \"{channelUsername}\", message: \"{message}\", roomRole: Owner, subscribing: true}}) {{ err {{ message }}}}}}"
             };
 
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+            
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
-
+            
             if (res.Errors != null)
             {
                 _account.RaiseError($"An error occured while sending chat message: {res.Errors[0].Message}");
@@ -45,6 +49,10 @@ namespace DSharp.Dlive.Mutation
             {
                 Query = $"mutation{{chatDelete(streamer: \"{channelUsername}\", id: \"{messageId}\") {{ err {{ message }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -65,6 +73,10 @@ namespace DSharp.Dlive.Mutation
                 Query = $"mutation{{moderatorUsername(username: \"{newModeratorUsername}\") {{ err {{ message }}}}}}"
             };
 
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
             if (res.Errors != null)
@@ -83,6 +95,10 @@ namespace DSharp.Dlive.Mutation
             {
                 Query = $"mutation{{moderatorRemove(username: \"{moderatorUsername}\") {{ err {{ message }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -104,6 +120,10 @@ namespace DSharp.Dlive.Mutation
                     $"mutation{{streamchatUserBan(streamer: \"{channelUsername}\", username: \"{usernameToBan}\") {{ err {{ message }}}}}}"
             };
 
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
             if (res.Errors != null)
@@ -123,6 +143,10 @@ namespace DSharp.Dlive.Mutation
                 Query =
                     $"mutation{{streamchatUserUnban(streamer: \"{streamer}\", username: \"{banUser}\") {{ err {{ message }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -145,6 +169,10 @@ namespace DSharp.Dlive.Mutation
                     $"mutation{{userTimeoutSet(streamer: \"{streamer}\", username: \"{timeoutUser}\", duration: {seconds}) {{ err {{ message }}}}}}"
             };
 
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
             if (res.Errors != null)
@@ -163,6 +191,10 @@ namespace DSharp.Dlive.Mutation
             {
                 Query = $"mutation{{chatModeSet(chatMode: {newChatMode}) {{ err {{ message }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -185,6 +217,10 @@ namespace DSharp.Dlive.Mutation
                     $"mutation{{emoteModeSet(emoteMode:{{ NoMineEmote: {disallowGlobalEmotes}, NoAllEmote: {disallowChannelEmotes}, NoGlobalEmote: {disallowGlobalEmotes}}}) {{ err {{ message }}}}}}"
             };
 
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
             if (res.Errors != null)
@@ -203,6 +239,10 @@ namespace DSharp.Dlive.Mutation
             {
                 Query = $"mutation{{chatIntervalSet(seconds: {cooldownSeconds}) {{ err {{ message }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -223,6 +263,10 @@ namespace DSharp.Dlive.Mutation
                 Query = $"mutation{{filterWordAdd(word: \"{word}\") {{ err {{ message }}}}}}"
             };
 
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
             if (res.Errors != null)
@@ -241,6 +285,10 @@ namespace DSharp.Dlive.Mutation
             {
                 Query = $"mutation{{filterWordDelete(word: \"{word}\") {{ err {{ message }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -262,6 +310,10 @@ namespace DSharp.Dlive.Mutation
                     $"mutation{{emoteBan(streamer: \"{streamer}\", emoteStr: \"{emoteString}\") {{ err {{ message }}}}}}"
             };
 
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
             if (res.Errors != null)
@@ -281,6 +333,10 @@ namespace DSharp.Dlive.Mutation
                 Query =
                     $"mutation{{emoteUnban(streamer: \"{streamer}\", emoteStr: \"{emoteString}\") {{ err {{ message }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -302,6 +358,10 @@ namespace DSharp.Dlive.Mutation
                     $"mutation{{subSettingSet(subSetting:{{ badgeText: \"{badgeText}\", badgeColor: \"{badgeColor}\", textColor: \"{textColor}\", benefits: {benefits} }}) {{ err {{ message }}}}}}"
             };
 
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
             if (res.Errors != null)
@@ -320,6 +380,10 @@ namespace DSharp.Dlive.Mutation
             {
                 Query = $"mutation{{giveawayStart() {{ err {{ message }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -340,6 +404,10 @@ namespace DSharp.Dlive.Mutation
                 Query = $"mutation{{giveawayClaim(streamer: \"{streamer}\") {{ err {{ message }}}}}}"
             };
 
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
             if (res.Errors != null)
@@ -358,6 +426,10 @@ namespace DSharp.Dlive.Mutation
             {
                 Query = $"mutation{{follow(streamer: \"{streamer}\") {{ err {{ message }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -378,6 +450,10 @@ namespace DSharp.Dlive.Mutation
                 Query = $"mutation{{unfollow(streamer: \"{streamer}\") {{ err {{ message }}}}}}"
             };
 
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
             if (res.Errors != null)
@@ -397,6 +473,10 @@ namespace DSharp.Dlive.Mutation
             {
                 Query = $"mutation{{panelAdd(input:{{ type: {type} }}) {{ err {{ message }} panel {{ id }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -421,6 +501,10 @@ namespace DSharp.Dlive.Mutation
                     $"mutation{{panelAdd(input:{{ type: {panel.PanelType} }}) {{ err {{ message }} panel {{ id }}}}}}"
             };
 
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
             if (res.Errors != null)
@@ -434,11 +518,19 @@ namespace DSharp.Dlive.Mutation
 
         public void UpdateAboutPanel(AboutPanel panel)
         {
+            if (!_account.IsAuthenticated)
+                _account.RaiseError(
+                    "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
+
             GraphQLRequest _req = new GraphQLRequest
             {
                 Query =
                     $"mutation{{panelUpdate(input:{{ id: {panel.PanelId}, title: \"{panel.PanelTitle}\", body: \"{panel.PanelText}\", imageURL: \"{(panel.PanelImageUrl == null ? "" : panel.PanelImageUrl.ToString())}\", imageLinkURL: \"{(panel.PanelUrlDestination == null ? "" : panel.PanelUrlDestination.ToString())}\" }}) {{ err {{ message }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -450,10 +542,18 @@ namespace DSharp.Dlive.Mutation
 
         public void DeleteAboutPanel(int id)
         {
+            if (!_account.IsAuthenticated)
+                _account.RaiseError(
+                    "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
+
             GraphQLRequest _req = new GraphQLRequest
             {
                 Query = $"mutation{{panelDelete(input:{{ id: {id} }}) {{ err {{ message }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -465,10 +565,18 @@ namespace DSharp.Dlive.Mutation
 
         public void DeleteAboutPanel(AboutPanel panel)
         {
+            if (!_account.IsAuthenticated)
+                _account.RaiseError(
+                    "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
+
             GraphQLRequest _req = new GraphQLRequest
             {
                 Query = $"mutation{{panelDelete(input:{{ id: {panel.PanelId} }}) {{ err {{ message }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -480,10 +588,18 @@ namespace DSharp.Dlive.Mutation
 
         public void SetAboutPanelOrder(int[] panelIds)
         {
+            if (!_account.IsAuthenticated)
+                _account.RaiseError(
+                    "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
+
             GraphQLRequest _req = new GraphQLRequest
             {
                 Query = $"mutation{{panelDelete(input:{{ ids: {panelIds} }}) {{ err {{ message }}}}}}"
             };
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLResponse res = Task.Run(() => _account.Client.SendMutationAsync(_req)).Result;
 
@@ -495,12 +611,20 @@ namespace DSharp.Dlive.Mutation
 
         public void SetAboutPanelOrder(AboutPanel[] panels)
         {
+            if (!_account.IsAuthenticated)
+                _account.RaiseError(
+                    "Authentication is required to use mutations. Set the AuthorizationToken property with your user token to authenticate");
+
             List<int> ids = new List<int>();
 
             foreach (AboutPanel panel in panels)
             {
                 ids.Add(panel.PanelId);
             }
+
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
 
             GraphQLRequest _req = new GraphQLRequest
             {

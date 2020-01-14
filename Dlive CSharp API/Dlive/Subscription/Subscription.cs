@@ -225,6 +225,7 @@ namespace DSharp.Dlive.Subscription
 
             #if DEBUG
                 Console.WriteLine(data.type.ToString());
+                Console.WriteLine(data.ToString());
             #endif
 
             switch (type)

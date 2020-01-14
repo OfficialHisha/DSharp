@@ -12,6 +12,10 @@ namespace DSharp.Dlive.Query
 
         public static PublicUserData GetPublicInfoByDisplayName(string displayname)
         {
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
             GraphQLResponse response = _publicClient.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.USER_BY_DISPLAYNAME, new string[] {displayname})).Result;
             
             RawUserData userData = response.GetDataFieldAs<RawUserData>("userByDisplayName");
@@ -21,8 +25,12 @@ namespace DSharp.Dlive.Query
         
         public static PublicUserData GetPublicInfo(string username)
         {
-            GraphQLResponse response = _publicClient.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.FOLLOWERS, new string[] {username})).Result;
-            
+            if (!Dlive.CanExecuteQuery())
+                Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
+            Dlive.IncreaseQueryCounter();
+
+            GraphQLResponse response = _publicClient.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.USER, new string[] { username })).Result;
+           
             RawUserData userData = response.GetDataFieldAs<RawUserData>("user");
 
             return userData.ToPublicUserData();
@@ -43,6 +51,10 @@ namespace DSharp.Dlive.Query
 
             while (cursor < user.NumFollowers)
             {
+                if (!Dlive.CanExecuteQuery())
+                    await Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds);
+                Dlive.IncreaseQueryCounter();
+
                 GraphQLResponse response = _publicClient.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.FOLLOWERS,
                     new string[] {user.Linoname, "50", cursor.ToString()})).Result;
 
@@ -57,9 +69,7 @@ namespace DSharp.Dlive.Query
                 cursor += 50;
                 await Task.Delay(1000);
             }
-
             
-
             return followers.ToArray();
         }
     }
