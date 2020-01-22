@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GraphQL.Common.Response;
+using Newtonsoft.Json.Linq;
 
 namespace DSharp.Dlive.Query
 {
@@ -31,6 +32,58 @@ namespace DSharp.Dlive.Query
             RawUserData userData = response.GetDataFieldAs<RawUserData>("me");
 
             return userData.ToUserData();
+        }
+
+        /// <summary>
+        /// This method might take some time to complete depending on the number of subscribers and other queries
+        /// that are sent while it's running.
+        /// </summary>
+        /// <returns>An array of public user data objects, one for each subscriber</returns>
+        public async Task<PublicUserData[]> GetSubscribers()
+        {
+            List<PublicUserData> subscribers = new List<PublicUserData>();
+
+            if (!_account.IsAuthenticated)
+            {
+                _account.RaiseError("Authentication is required to use this query. Set the Dlive.AuthorizationToken property with your user token to authenticate");
+                return subscribers.ToArray();
+            }
+
+            int cursor = -1;
+
+            UserData userData = _account.Query.GetMyInfo();
+
+            if (userData.Private.SubscriberCount == 0)
+            {
+                return subscribers.ToArray();
+            }
+
+            while (cursor < userData.Private.SubscriberCount)
+            {
+                if (!Dlive.CanExecuteQuery())
+                    await Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds);
+                Dlive.IncreaseQueryCounter();
+
+                GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.SUBSCRIBERS,
+                    new string[] { userData.Public.Linoname, "50", cursor.ToString() })).Result;
+
+                Console.WriteLine(response.Data.ToString());
+
+                JArray subscriberList = response.Data.me.@private.subscribers.list;
+
+                Console.WriteLine(subscriberList.Count);
+
+                foreach (JObject subscriber in subscriberList["subscriber"])
+                {
+                    RawUserData subscriberData = new RawUserData(subscriber);
+                    subscribers.Add(subscriberData.ToPublicUserData());
+                }
+
+                cursor += 50;
+                await Task.Delay(1000);
+            }
+
+            return subscribers.ToArray();
         }
 
         public PublicUserData GetPublicInfoByDisplayName(string displayName)
@@ -63,36 +116,41 @@ namespace DSharp.Dlive.Query
         /// This method might take some time to complete depending on the number of followers and other queries
         /// that are sent while it's running.
         /// </summary>
-        /// <param name="user">The user object of the user you want to fetch followers from</param>
         /// <returns>An array of public user data objects, one for each follower</returns>
-        public async Task<PublicUserData[]> GetFollowersForUser(PublicUserData user)
+        public async Task<PublicUserData[]> GetFollowers()
         {
-            //followers (first = amount of followers to fetch, after = start after this NUMBER)
-            int cursor = 0;
+            int cursor = -1;
 
             List<PublicUserData> followers = new List<PublicUserData>();
 
-            while (cursor < user.NumFollowers)
+            PublicUserData userData = _account.Query.GetMyInfo().Public;
+
+            if (userData.NumFollowers == 0)
+            {
+                return followers.ToArray();
+            }
+
+            while (cursor < userData.NumFollowers)
             {
                 if (!Dlive.CanExecuteQuery())
                     await Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds);
                 Dlive.IncreaseQueryCounter();
 
                 GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.FOLLOWERS,
-                    new string[] { user.Linoname, "50", cursor.ToString() })).Result;
+                    new string[] { userData.Linoname, "50", cursor.ToString() })).Result;
 
-                RawUserData[] userData = response.GetDataFieldAs<RawUserData[]>("user.followers.list");
+                JArray followerList = response.Data.user.followers.list;
 
-
-                foreach (RawUserData rawuserData in userData)
+                foreach (JObject follower in followerList)
                 {
-                    followers.Add(rawuserData.ToPublicUserData());
+                    RawUserData followerData = new RawUserData(follower);
+                    followers.Add(followerData.ToPublicUserData());
                 }
 
                 cursor += 50;
                 await Task.Delay(1000);
             }
-            
+
             return followers.ToArray();
         }
     }

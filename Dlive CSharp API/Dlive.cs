@@ -4,6 +4,8 @@ namespace DSharp.Dlive
 {
     public static class Dlive
     {
+        public static string Version { get; } = "RC5 (Unreleased)";
+
         public static bool EnableRateLimiter { get; set; } = false;
 
         public static DateTime NextIntervalReset { get; private set; } = DateTime.Now.AddMinutes(5);

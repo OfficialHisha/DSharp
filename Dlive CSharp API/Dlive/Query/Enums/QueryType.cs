@@ -6,6 +6,7 @@ namespace DSharp.Dlive.Query
         USER,
         USER_BY_DISPLAYNAME,
         FOLLOWERS,
+        SUBSCRIBERS,
         REPLAYS
     }
 }

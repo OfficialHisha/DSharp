@@ -11,7 +11,7 @@ namespace DSharp.Dlive.Query
             {
                 case QueryType.ME:
                     return @"query{
-                            me {
+                            me{
                                 username
                                 displayname
                                 avatar
@@ -43,7 +43,7 @@ namespace DSharp.Dlive.Query
                                     filterWords
                                     streamKey {
                                         key
-                                    }}}}}";
+                                    }}}}";
                 case QueryType.USER:
                     StringBuilder user = new StringBuilder();
                     user.Append("query{");
@@ -103,7 +103,7 @@ namespace DSharp.Dlive.Query
                 case QueryType.FOLLOWERS:
                     StringBuilder followers = new StringBuilder();
                     followers.Append("query{");
-                    followers.Append($"userByDisplayName(displayname:\"{data[0]}\") {{");
+                    followers.Append($"user(username:\"{data[0]}\") {{");
                     followers.Append($"followers (first: {data[1]}, after: \"{data[2]}\") {{");
                     followers.Append(@"totalCount
                         list {
@@ -129,8 +129,47 @@ namespace DSharp.Dlive.Query
                             }
                             treasureChest {
                                 value
-                            }}}}");
+                            }}}}}");
                     return followers.ToString();
+                case QueryType.SUBSCRIBERS:
+                    StringBuilder subscribers = new StringBuilder();
+                    subscribers.Append("query{");
+                    subscribers.Append("me{");
+                    subscribers.Append("private{");
+                    subscribers.Append($"subscribers (first: {data[1]}, after: \"{ data[2]}\") {{");
+                    subscribers.Append(@"totalCount
+                        list {
+                            subscriber {
+                                username
+                                displayname
+                                avatar
+                                partnerStatus
+                                deactivated
+                                panels {
+                                    id
+                                    type
+                                    title
+                                    imageURL
+                                    imageLinkURL
+                                    body
+                                }
+                                followers {
+                                    totalCount
+                                }
+                                wallet {
+                                    totalEarning
+                                    balance
+                                }
+                                treasureChest {
+                                    value
+                                }}
+                            tier
+                            status
+                            lastBilledDate
+                            subscribedAt
+                            month
+                        }}}}}");
+                    return subscribers.ToString();
                 case QueryType.REPLAYS:
                     return "";
                 default:

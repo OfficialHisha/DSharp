@@ -1,5 +1,6 @@
 ﻿using GraphQL.Client.Http;
 using GraphQL.Common.Response;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -42,34 +43,42 @@ namespace DSharp.Dlive.Query
         /// </summary>
         /// <param name="user">The user object of the user you want to fetch followers from</param>
         /// <returns>An array of public user data objects, one for each follower</returns>
-        public static async Task<PublicUserData[]> GetFollowersForUser(PublicUserData user)
+        public static async Task<PublicUserData[]> GetFollowersForUser(string username)
         {
-            //followers (first = amount of followers to fetch, after = start after this NUMBER)
-            int cursor = 0;
+            int cursor = -1;
             
             List<PublicUserData> followers = new List<PublicUserData>();
 
-            while (cursor < user.NumFollowers)
+            PublicUserData userData = GetPublicInfo(username);
+
+            if (userData.NumFollowers == 0)
+            {
+                return followers.ToArray();
+            }
+
+            while (cursor < userData.NumFollowers)
             {
                 if (!Dlive.CanExecuteQuery())
                     await Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds);
                 Dlive.IncreaseQueryCounter();
 
                 GraphQLResponse response = _publicClient.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.FOLLOWERS,
-                    new string[] {user.Linoname, "50", cursor.ToString()})).Result;
+                    new string[] { username, "50", cursor.ToString() })).Result;
 
-                RawUserData[] userData = response.GetDataFieldAs<RawUserData[]>("user.followers.list");
+                JArray test = response.Data.user.followers.list;
 
-                
-                foreach (RawUserData rawuserData in userData)
+                Console.WriteLine(test.Count);
+
+                foreach (JObject follower in test)
                 {
-                    followers.Add(rawuserData.ToPublicUserData());
+                    RawUserData followerData = new RawUserData(follower);
+                    followers.Add(followerData.ToPublicUserData());
                 }
 
                 cursor += 50;
                 await Task.Delay(1000);
             }
-            
+
             return followers.ToArray();
         }
     }

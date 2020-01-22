@@ -19,6 +19,46 @@ namespace DSharp.Dlive.Query
         public RawPanelData[] panels;
         public RawPrivateUserData @private;
 
+        public RawUserData(JObject userData)
+        {
+            Enum.TryParse(userData["partnerStatus"].ToString().ToUpper(), out PartnerStatus status);
+
+            List<Badge> badges = new List<Badge>();
+            if (userData.ContainsKey("badges"))
+            {
+                foreach (JObject badge in userData["badges"])
+                {
+                    Enum.TryParse(badge.ToString().ToUpper(), out Badge realBadge);
+                    badges.Add(realBadge);
+                }
+            }
+
+            List<RawPanelData> panels = new List<RawPanelData>();
+            foreach (JObject panel in userData["panels"])
+            {
+                panels.Add(new RawPanelData(panel));
+            }
+
+
+            @private = new RawPrivateUserData();
+            if (userData.ContainsKey("private"))
+            {
+                @private = new RawPrivateUserData(userData["private"] as JObject);
+            }
+
+            username = userData["username"].ToString();
+            displayname = userData["displayname"].ToString();
+            partnerStatus = status;
+            effect = userData.ContainsKey("effect") ? userData["effect"].ToString() : "";
+            this.badges = badges.ToArray();
+            deactivated = bool.Parse(userData["deactivated"].ToString());
+            avatar = string.IsNullOrWhiteSpace(userData["avatar"].ToString()) ? null : new Uri(userData["avatar"].ToString());
+            followers = userData["followers"] as JObject;
+            treasureChest = userData["treasureChest"] as JObject;
+            wallet = userData["wallet"] as JObject;
+            this.panels = panels.ToArray();
+            @private = userData.ContainsKey("private") ? new RawPrivateUserData(userData["private"] as JObject) : new RawPrivateUserData();
+    }
 
         public UserData ToUserData()
         {
