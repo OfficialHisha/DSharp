@@ -52,13 +52,13 @@ namespace DSharp.Dlive.Query
             int cursor = -1;
 
             UserData userData = _account.Query.GetMyInfo();
-
+            
             if (userData.Private.SubscriberCount == 0)
             {
                 return subscribers.ToArray();
             }
-
-            while (cursor < userData.Private.SubscriberCount)
+            
+            do
             {
                 if (!Dlive.CanExecuteQuery())
                     await Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds);
@@ -67,21 +67,19 @@ namespace DSharp.Dlive.Query
                 GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.SUBSCRIBERS,
                     new string[] { userData.Public.Linoname, "50", cursor.ToString() })).Result;
 
-                Console.WriteLine(response.Data.ToString());
-
                 JArray subscriberList = response.Data.me.@private.subscribers.list;
 
-                Console.WriteLine(subscriberList.Count);
-
-                foreach (JObject subscriber in subscriberList["subscriber"])
+                foreach (JObject subscriber in subscriberList)
                 {
-                    RawUserData subscriberData = new RawUserData(subscriber);
+                    RawUserData subscriberData = new RawUserData(subscriber["subscriber"] as JObject);
                     subscribers.Add(subscriberData.ToPublicUserData());
                 }
 
                 cursor += 50;
-                await Task.Delay(1000);
+                if (userData.Private.SubscriberCount > 50)
+                    await Task.Delay(200);
             }
+            while (cursor < userData.Private.SubscriberCount);
 
             return subscribers.ToArray();
         }
@@ -117,6 +115,7 @@ namespace DSharp.Dlive.Query
         /// that are sent while it's running.
         /// </summary>
         /// <returns>An array of public user data objects, one for each follower</returns>
+        [Obsolete("There is a Dlive bug that causes this method to, possibly, miss some followers. There is nothing I can do about it until Dlive fixes their API. Sorry :(")]
         public async Task<PublicUserData[]> GetFollowers()
         {
             int cursor = -1;
@@ -130,7 +129,7 @@ namespace DSharp.Dlive.Query
                 return followers.ToArray();
             }
 
-            while (cursor < userData.NumFollowers)
+            do
             {
                 if (!Dlive.CanExecuteQuery())
                     await Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds);
@@ -148,8 +147,10 @@ namespace DSharp.Dlive.Query
                 }
 
                 cursor += 50;
-                await Task.Delay(1000);
+                if (userData.NumFollowers > 50)
+                    await Task.Delay(200);
             }
+            while (cursor < userData.NumFollowers);
 
             return followers.ToArray();
         }

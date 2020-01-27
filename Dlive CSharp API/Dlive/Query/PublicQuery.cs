@@ -43,6 +43,7 @@ namespace DSharp.Dlive.Query
         /// </summary>
         /// <param name="user">The user object of the user you want to fetch followers from</param>
         /// <returns>An array of public user data objects, one for each follower</returns>
+        [Obsolete("There is a Dlive bug that causes this method to, possibly, miss some followers. There is nothing I can do about it until Dlive fixes their API. Sorry :(")]
         public static async Task<PublicUserData[]> GetFollowersForUser(string username)
         {
             int cursor = -1;
@@ -56,30 +57,30 @@ namespace DSharp.Dlive.Query
                 return followers.ToArray();
             }
 
-            while (cursor < userData.NumFollowers)
+            do
             {
                 if (!Dlive.CanExecuteQuery())
                     await Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds);
                 Dlive.IncreaseQueryCounter();
 
                 GraphQLResponse response = _publicClient.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.FOLLOWERS,
-                    new string[] { username, "50", cursor.ToString() })).Result;
+                    new string[] { userData.Linoname, "50", cursor.ToString() })).Result;
 
-                JArray test = response.Data.user.followers.list;
+                JArray followerList = response.Data.user.followers.list;
 
-                Console.WriteLine(test.Count);
-
-                foreach (JObject follower in test)
+                foreach (JObject follower in followerList)
                 {
                     RawUserData followerData = new RawUserData(follower);
                     followers.Add(followerData.ToPublicUserData());
                 }
 
                 cursor += 50;
-                await Task.Delay(1000);
+                if (userData.NumFollowers > 50)
+                    await Task.Delay(200);
             }
+            while (cursor < userData.NumFollowers);
 
             return followers.ToArray();
-        }
+        }    
     }
 }

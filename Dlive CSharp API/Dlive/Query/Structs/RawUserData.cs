@@ -39,13 +39,6 @@ namespace DSharp.Dlive.Query
                 panels.Add(new RawPanelData(panel));
             }
 
-
-            @private = new RawPrivateUserData();
-            if (userData.ContainsKey("private"))
-            {
-                @private = new RawPrivateUserData(userData["private"] as JObject);
-            }
-
             username = userData["username"].ToString();
             displayname = userData["displayname"].ToString();
             partnerStatus = status;

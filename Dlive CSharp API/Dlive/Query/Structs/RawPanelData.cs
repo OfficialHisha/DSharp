@@ -20,8 +20,8 @@ namespace DSharp.Dlive.Query
             this.type = type;
             title = panel["title"].ToString();
             body = panel["body"].ToString();
-            imageURL = string.IsNullOrWhiteSpace(panel["imageURL"].ToString()) ? null : new Uri(panel["imageURL"].ToString());
-            imageLinkURL = string.IsNullOrWhiteSpace(panel["imageLinkURL"].ToString()) ? null : new Uri(panel["imageLinkURL"].ToString());
+            imageURL = string.IsNullOrWhiteSpace(panel["imageURL"].ToString()) ? null : Uri.TryCreate(panel["imageURL"].ToString(), UriKind.RelativeOrAbsolute, out Uri imgUri) ? imgUri : null;
+            imageLinkURL = string.IsNullOrWhiteSpace(panel["imageLinkURL"].ToString()) ? null : Uri.TryCreate(panel["imageLinkURL"].ToString(), UriKind.RelativeOrAbsolute, out Uri imgLinkUri) ? imgLinkUri : null;
 
         }
 
