@@ -10,7 +10,7 @@
         FOLLOW,
         SUBSCRIPTION,
         SUBSTREAK,// TODO:
-        GIFTSUB,// TODO:
+        GIFTSUB,
         DELETE,
         HOST,
         CHAT_MODE,

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using DSharp.Dlive.Subscription.Chat;
 using DSharp.Dlive.Subscription.Chest;
 using DSharp.Utility;
+using DSharp.Dlive.Query;
 
 namespace DSharp.Dlive.Subscription
 {
@@ -131,8 +132,7 @@ namespace DSharp.Dlive.Subscription
             {
                 byte[] messageBuffer = new byte[4096];
                 await _socket.ReceiveAsync(new ArraySegment<byte>(messageBuffer), _cancellationToken.Token);
-                string debug = Encoding.ASCII.GetString(messageBuffer);// Sometimes we get an unreadable message?
-                Task.Run(() => ParseMessage(JsonConvert.DeserializeObject(debug)));
+                Task.Run(() => ParseMessage(JsonConvert.DeserializeObject(Encoding.ASCII.GetString(messageBuffer))));
             } while (IsConnected);
         }
 
@@ -210,7 +210,7 @@ namespace DSharp.Dlive.Subscription
                     if (!int.TryParse(data[0].count.ToString(), out int months))
                         months = 1;
 
-                    OnChatEvent?.Invoke(new ChatGiftSubscriptionMessage(channel, data[0].id.ToString(), months, Util.DliveUserObjectToPublicUserData(data[0].sender), Util.DliveUserObjectToPublicUserData(data[0].receiver), roomRole));
+                    OnChatEvent?.Invoke(new ChatGiftSubscriptionMessage(channel, data[0].id.ToString(), months, Util.DliveUserObjectToPublicUserData(data[0].sender), PublicQuery.GetPublicInfoByDisplayName(data[0].receiver.ToString()), roomRole));
                     break;
                 default:
                     object user = data[0].sender;
