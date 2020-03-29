@@ -4,9 +4,11 @@ namespace DSharp.Dlive
 {
     public static class Dlive
     {
-        public static string Version { get; } = "RC5 Patch 3 (Unreleased)";
+        public static string Version { get; } = "0.6.0";
 
         public static bool EnableRateLimiter { get; set; } = false;
+
+        public static double LemonUSDValue { get; } = 0.012;
 
         public static DateTime NextIntervalReset { get; private set; } = DateTime.Now.AddMinutes(5);
         private static int currentIntervalQueries;

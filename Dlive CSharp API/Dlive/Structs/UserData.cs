@@ -13,10 +13,10 @@ namespace DSharp.Dlive
             Private = privateUserData;
         }
 
-        public UserData(string linoname, string displayname, PartnerStatus partnerStatus, string effect, Badge[] badges, bool deactivated, AboutPanel[] panels, Uri avatar, long followerCount,
+        public UserData(string username, string displayname, PartnerStatus partnerStatus, string effect, Badge[] badges, bool deactivated, AboutPanel[] panels, Uri avatar, long followerCount,
                         long chest, long balance, long totalEarnings, long subscriberCount, string email, string[] wordFilter, string streamKey)
         {
-            Public = new PublicUserData(linoname, displayname, partnerStatus, effect, badges, deactivated, panels, avatar, followerCount, chest, balance, totalEarnings);
+            Public = new PublicUserData(username, displayname, partnerStatus, effect, badges, deactivated, panels, avatar, followerCount, chest, balance, totalEarnings);
             Private = new PrivateUserData(subscriberCount, email, wordFilter, streamKey);
         }
     }

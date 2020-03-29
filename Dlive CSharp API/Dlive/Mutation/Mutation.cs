@@ -156,8 +156,7 @@ namespace DSharp.Dlive.Mutation
             }
         }
 
-        //TODO: Figure out granularity of duration (assuming seconds for now, but it could as well be minutes)
-        public void TimeoutUser(string streamer, string timeoutUser, int seconds)
+        public void TimeoutUser(string streamer, string timeoutUsername, int minutes)
         {
             if (!_account.IsAuthenticated)
                 _account.RaiseError(
@@ -166,7 +165,7 @@ namespace DSharp.Dlive.Mutation
             GraphQLRequest _req = new GraphQLRequest
             {
                 Query =
-                    $"mutation{{userTimeoutSet(streamer: \"{streamer}\", username: \"{timeoutUser}\", duration: {seconds}) {{ err {{ message }}}}}}"
+                    $"mutation{{userTimeoutSet(streamer: \"{streamer}\", username: \"{timeoutUsername}\", duration: {minutes}) {{ err {{ message }}}}}}"
             };
 
             if (!Dlive.CanExecuteQuery())

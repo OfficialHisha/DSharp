@@ -4,7 +4,9 @@ namespace DSharp.Dlive
 {
     public struct PublicUserData
     {
+        [Obsolete("Use Username instead")]
         public string Linoname { get; }
+        public string Username { get; }
         public string Displayname { get; }
         public PartnerStatus PartnerStatus { get; }
         public string Effect { get; }
@@ -21,9 +23,9 @@ namespace DSharp.Dlive
         public float LemonBalance { get; }
         public float LemonEarnings { get; }
 
-        public PublicUserData(string linoname, string displayname, PartnerStatus partnerStatus, string effect, Badge[] badges, bool deactivated, AboutPanel[] panels, Uri avatar, long followerCount, long chest, long balance, long earnings)
+        public PublicUserData(string username, string displayname, PartnerStatus partnerStatus, string effect, Badge[] badges, bool deactivated, AboutPanel[] panels, Uri avatar, long followerCount, long chest, long balance, long earnings)
         {
-            Linoname = linoname;
+            Username = Linoname = username;
             Displayname = displayname;
             PartnerStatus = partnerStatus;
             Effect = effect;

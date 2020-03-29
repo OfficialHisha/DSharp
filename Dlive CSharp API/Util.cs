@@ -34,7 +34,7 @@ namespace DSharp.Utility
         
         public static string DliveDisplayNameToUsername(string displayName)
         {
-            return PublicQuery.GetPublicInfoByDisplayName(displayName).Linoname;
+            return PublicQuery.GetPublicInfoByDisplayName(displayName).Username;
         }
     }
 }

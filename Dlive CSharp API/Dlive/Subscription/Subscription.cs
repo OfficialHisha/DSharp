@@ -57,13 +57,13 @@ namespace DSharp.Dlive.Subscription
 
             _socket.ConnectAsync(Dlive.SubscriptionEndpoint, CancellationToken.None).Wait();
 
-            messageBuffer = Encoding.ASCII.GetBytes("{\"type\":\"connection_init\"}");
+            messageBuffer = Encoding.UTF8.GetBytes("{\"type\":\"connection_init\"}");
 
             _socket.SendAsync(new ArraySegment<byte>(messageBuffer), WebSocketMessageType.Text, true, CancellationToken.None).Wait();
             messageBuffer = new byte[128];
             _socket.ReceiveAsync(new ArraySegment<byte>(messageBuffer), CancellationToken.None).Wait();
 
-            dynamic response = JsonConvert.DeserializeObject(Encoding.ASCII.GetString(messageBuffer));
+            dynamic response = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(messageBuffer));
             if (response.type.ToString() != "connection_ack")
             {
                 string error = response.payload.message.ToString();
@@ -132,7 +132,7 @@ namespace DSharp.Dlive.Subscription
             {
                 byte[] messageBuffer = new byte[4096];
                 await _socket.ReceiveAsync(new ArraySegment<byte>(messageBuffer), _cancellationToken.Token);
-                Task.Run(() => ParseMessage(JsonConvert.DeserializeObject(Encoding.ASCII.GetString(messageBuffer))));
+                Task.Run(() => ParseMessage(JsonConvert.DeserializeObject(Encoding.UTF8.GetString(messageBuffer))));
             } while (IsConnected);
         }
 
@@ -165,7 +165,6 @@ namespace DSharp.Dlive.Subscription
             Enum.TryParse(data[0].roomRole.ToString().ToUpper(), out RoomRole roomRole);
 
             #if DEBUG
-                Console.WriteLine(data[0].type.ToString());
                 Console.WriteLine(data[0].ToString());
             #endif
 
@@ -213,8 +212,8 @@ namespace DSharp.Dlive.Subscription
                     OnChatEvent?.Invoke(new ChatGiftSubscriptionMessage(channel, data[0].id.ToString(), months, Util.DliveUserObjectToPublicUserData(data[0].sender), PublicQuery.GetPublicInfoByDisplayName(data[0].receiver.ToString()), roomRole));
                     break;
                 default:
-                    object user = data[0].sender;
-                    OnChatEvent?.Invoke(user != null ? new UserChatMessage(type, channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(data[0].sender), roomRole, (bool)data[0].subscribing.ToString()): new ChatMessage(type, channel, data[0].id.ToString()));
+                    dynamic user = data[0].sender;
+                    OnChatEvent?.Invoke(user != null ? new UserChatMessage(type, channel, data[0].id.ToString(), Util.DliveUserObjectToPublicUserData(user), roomRole, bool.Parse(data[0].subscribing.ToString())) : new ChatMessage(type, channel, data[0].id.ToString()));
                     break;
             }
         }
@@ -250,7 +249,7 @@ namespace DSharp.Dlive.Subscription
             string id = $"{_username}_chat";
             byte[] messageBuffer = new byte[512];
             
-            messageBuffer = Encoding.ASCII.GetBytes($"{{\"id\":\"{id}\",\"type\":\"start\",\"payload\":{{\"query\":\"subscription{{streamMessageReceived(streamer:\\\"{_username}\\\"){{__typename}}}}\"}}}}");
+            messageBuffer = Encoding.UTF8.GetBytes($"{{\"id\":\"{id}\",\"type\":\"start\",\"payload\":{{\"query\":\"subscription{{streamMessageReceived(streamer:\\\"{_username}\\\"){{__typename}}}}\"}}}}");
             await _socket.SendAsync(new ArraySegment<byte>(messageBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
             ChatId = id;
         }
@@ -260,7 +259,7 @@ namespace DSharp.Dlive.Subscription
             string id = $"{_username}_chest";
             byte[] messageBuffer = new byte[512];
 
-            messageBuffer = Encoding.ASCII.GetBytes($"{{\"id\":\"{id}\",\"type\":\"start\",\"payload\":{{\"query\":\"subscription{{treasureChestMessageReceived(streamer:\\\"{_username}\\\"){{__typename}}}}\"}}}}");
+            messageBuffer = Encoding.UTF8.GetBytes($"{{\"id\":\"{id}\",\"type\":\"start\",\"payload\":{{\"query\":\"subscription{{treasureChestMessageReceived(streamer:\\\"{_username}\\\"){{__typename}}}}\"}}}}");
             await _socket.SendAsync(new ArraySegment<byte>(messageBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
             ChestId = id;
         }

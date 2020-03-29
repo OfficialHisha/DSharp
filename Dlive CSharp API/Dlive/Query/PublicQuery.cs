@@ -18,10 +18,18 @@ namespace DSharp.Dlive.Query
             Dlive.IncreaseQueryCounter();
 
             GraphQLResponse response = _publicClient.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.USER_BY_DISPLAYNAME, new string[] {displayname})).Result;
-            
-            RawUserData userData = response.GetDataFieldAs<RawUserData>("userByDisplayName");
 
-            return userData.ToPublicUserData();
+            PublicUserData userData;
+            if (response.Data.userByDisplayName != null)
+            {
+                userData = response.GetDataFieldAs<RawUserData>("userByDisplayName").ToPublicUserData();
+            }
+            else
+            {
+                userData = new PublicUserData("invalid user", "Invalid User", PartnerStatus.NONE, "", null, true, null, null, 0, 0, 0, 0);
+            }
+
+            return userData;
         }
         
         public static PublicUserData GetPublicInfo(string username)
@@ -31,10 +39,18 @@ namespace DSharp.Dlive.Query
             Dlive.IncreaseQueryCounter();
 
             GraphQLResponse response = _publicClient.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.USER, new string[] { username })).Result;
-           
-            RawUserData userData = response.GetDataFieldAs<RawUserData>("user");
 
-            return userData.ToPublicUserData();
+            PublicUserData userData;
+            if (response.Data.user != null)
+            {
+                userData = response.GetDataFieldAs<RawUserData>("user").ToPublicUserData();
+            }
+            else
+            {
+                userData = new PublicUserData("invalid user", "Invalid User", PartnerStatus.NONE, "", null, true, null, null, 0, 0, 0, 0);
+            }
+
+            return userData;
         }
 
         /// <summary>
@@ -64,7 +80,7 @@ namespace DSharp.Dlive.Query
                 Dlive.IncreaseQueryCounter();
 
                 GraphQLResponse response = _publicClient.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.FOLLOWERS,
-                    new string[] { userData.Linoname, "50", cursor.ToString() })).Result;
+                    new string[] { userData.Username, "50", cursor.ToString() })).Result;
 
                 JArray followerList = response.Data.user.followers.list;
 
