@@ -4,7 +4,7 @@ namespace DSharp.Dlive
 {
     public static class Dlive
     {
-        public static string Version { get; } = "0.6.0";
+        public static string Version { get; } = "0.6.1";
 
         public static bool EnableRateLimiter { get; set; } = false;
 

@@ -25,6 +25,29 @@ namespace DSharp.Dlive.Query
                                     imageLinkURL
                                     body
                                 }
+                                livestream {
+                                    ageRestriction
+                                    thumbnailUrl
+                                    disableAlert
+                                    title
+                                    createdAt
+                                    totalReward
+                                    watchingCount
+                                    language {
+                                        language
+                                        code
+                                    }
+                                    category {
+                                        title
+                                        imgUrl
+                                        coverImgUrl
+                                    }
+                                    creator {
+                                        username
+                                        displayname
+                                    }
+                                    view
+                                }
                                 followers {
                                     totalCount
                                 }
@@ -61,6 +84,29 @@ namespace DSharp.Dlive.Query
                             imageLinkURL
                             body
                         }
+                        livestream {
+                            ageRestriction
+                            thumbnailUrl
+                            disableAlert
+                            title
+                            createdAt
+                            totalReward
+                            watchingCount
+                            language {
+                                language
+                                code
+                            }
+                            category {
+                                title
+                                imgUrl
+                                coverImgUrl
+                            }
+                            creator {
+                                username
+                                displayname
+                            }
+                            view
+                        }
                         followers {
                             totalCount
                         }
@@ -88,6 +134,29 @@ namespace DSharp.Dlive.Query
                             imageURL
                             imageLinkURL
                             body
+                        }
+                        livestream {
+                            ageRestriction
+                            thumbnailUrl
+                            disableAlert
+                            title
+                            createdAt
+                            totalReward
+                            watchingCount
+                            language {
+                                language
+                                code
+                            }
+                            category {
+                                title
+                                imgUrl
+                                coverImgUrl
+                            }
+                            creator {
+                                username
+                                displayname
+                            }
+                            view
                         }
                         followers {
                             totalCount
@@ -119,6 +188,29 @@ namespace DSharp.Dlive.Query
                                 imageURL
                                 imageLinkURL
                                 body
+                            }
+                            livestream {
+                                ageRestriction
+                                thumbnailUrl
+                                disableAlert
+                                title
+                                createdAt
+                                totalReward
+                                watchingCount
+                                language {
+                                    language
+                                    code
+                                }
+                                category {
+                                    title
+                                    imgUrl
+                                    coverImgUrl
+                                }
+                                creator {
+                                    username
+                                    displayname
+                                }
+                                view
                             }
                             followers {
                                 totalCount
@@ -152,6 +244,29 @@ namespace DSharp.Dlive.Query
                                     imageURL
                                     imageLinkURL
                                     body
+                                }
+                                livestream {
+                                    ageRestriction
+                                    thumbnailUrl
+                                    disableAlert
+                                    title
+                                    createdAt
+                                    totalReward
+                                    watchingCount
+                                    language {
+                                        language
+                                        code
+                                    }
+                                    category {
+                                        title
+                                        imgUrl
+                                        coverImgUrl
+                                    }
+                                    creator {
+                                        username
+                                        displayname
+                                    }
+                                    view
                                 }
                                 followers {
                                     totalCount

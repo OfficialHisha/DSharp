@@ -24,7 +24,7 @@ namespace DSharp.Utility
                 badges.Add(badge);
             }
 
-            return new PublicUserData(userObject.username.ToString(), userObject.displayname.ToString(), partnerStatus, userObject.effect.ToString(), badges.ToArray(), false, null, new Uri(userObject.avatar.ToString()), -1, -1, -1, -1);
+            return new PublicUserData(userObject.username.ToString(), userObject.displayname.ToString(), partnerStatus, false, userObject.effect.ToString(), badges.ToArray(), false, null, new Uri(userObject.avatar.ToString()), -1, -1, -1, -1);
         }
 
         public static string DliveUsernameToDisplayName(string username)

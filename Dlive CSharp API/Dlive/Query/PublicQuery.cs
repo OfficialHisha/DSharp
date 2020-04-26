@@ -26,7 +26,7 @@ namespace DSharp.Dlive.Query
             }
             else
             {
-                userData = new PublicUserData("invalid user", "Invalid User", PartnerStatus.NONE, "", null, true, null, null, 0, 0, 0, 0);
+                userData = new PublicUserData("invalid user", "Invalid User", PartnerStatus.NONE, false, "", null, true, null, null, 0, 0, 0, 0);
             }
 
             return userData;
@@ -38,6 +38,8 @@ namespace DSharp.Dlive.Query
                 Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
             Dlive.IncreaseQueryCounter();
 
+            Console.WriteLine(GraphqlHelper.GetQueryString(QueryType.USER, new string[] { username }));
+
             GraphQLResponse response = _publicClient.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.USER, new string[] { username })).Result;
 
             PublicUserData userData;
@@ -47,7 +49,7 @@ namespace DSharp.Dlive.Query
             }
             else
             {
-                userData = new PublicUserData("invalid user", "Invalid User", PartnerStatus.NONE, "", null, true, null, null, 0, 0, 0, 0);
+                userData = new PublicUserData("invalid user", "Invalid User", PartnerStatus.NONE, false, "", null, true, null, null, 0, 0, 0, 0);
             }
 
             return userData;

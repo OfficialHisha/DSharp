@@ -16,6 +16,7 @@ namespace DSharp.Dlive.Query
         public JObject followers;
         public JObject treasureChest;
         public JObject wallet;
+        public JObject livestream;
         public RawPanelData[] panels;
         public RawPrivateUserData @private;
 
@@ -49,6 +50,7 @@ namespace DSharp.Dlive.Query
             followers = userData["followers"] as JObject;
             treasureChest = userData["treasureChest"] as JObject;
             wallet = userData["wallet"] as JObject;
+            livestream = userData["livestream"] != null ? userData["livestream"] as JObject : null;
             this.panels = panels.ToArray();
             @private = userData.ContainsKey("private") ? new RawPrivateUserData(userData["private"] as JObject) : new RawPrivateUserData();
     }
@@ -61,7 +63,7 @@ namespace DSharp.Dlive.Query
                 actualPanels.Add(panel.ToAboutPanel());
             }
                 
-            PublicUserData publicData = new PublicUserData(username, displayname, partnerStatus, effect, badges, deactivated, actualPanels.ToArray(), avatar, (long)followers["totalCount"],
+            PublicUserData publicData = new PublicUserData(username, displayname, partnerStatus, livestream != null, effect, badges, deactivated, actualPanels.ToArray(), avatar, (long)followers["totalCount"],
                 (long)treasureChest["value"], (long)wallet["balance"], (long)wallet["totalEarning"]);
             PrivateUserData privateData = new PrivateUserData((long) @private.subscribers["totalCount"],
                 @private.email, @private.filterWords, @private.streamKey["key"].ToString());
@@ -76,7 +78,7 @@ namespace DSharp.Dlive.Query
             {
                 actualPanels.Add(panel.ToAboutPanel());
             }
-            return new PublicUserData(username, displayname, partnerStatus, effect, badges, deactivated, actualPanels.ToArray(), avatar, (long)followers["totalCount"],
+            return new PublicUserData(username, displayname, partnerStatus, livestream != null, effect, badges, deactivated, actualPanels.ToArray(), avatar, (long)followers["totalCount"],
                 (long)treasureChest["value"], (long)wallet["balance"], (long)wallet["totalEarning"]);
         }
     }
