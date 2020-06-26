@@ -6,6 +6,9 @@
         ICE_CREAM,
         DIAMOND,
         NINJAGHINI,
-        NINJET
+        NINJET,
+        BTT,
+        TRX,
+        CRYPTO = BTT | TRX
     }
 }
