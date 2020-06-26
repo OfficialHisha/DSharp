@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DSharp.Dlive.Exceptions;
 using GraphQL.Common.Response;
 using Newtonsoft.Json.Linq;
 
@@ -28,6 +29,9 @@ namespace DSharp.Dlive.Query
             Dlive.IncreaseQueryCounter();
 
             GraphQLResponse response = _account.Client.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.ME)).Result;
+
+            if (response.Data.me == null)
+                throw new AccountException($"User data was not received, this could be caused by an expired user token!");
 
             RawUserData userData = response.GetDataFieldAs<RawUserData>("me");
 

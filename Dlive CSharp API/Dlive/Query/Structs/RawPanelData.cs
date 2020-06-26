@@ -9,8 +9,8 @@ namespace DSharp.Dlive.Query
         public AboutPanelType type;
         public string title;
         public string body;
-        public Uri imageURL;
-        public Uri imageLinkURL;
+        public string imageURL;
+        public string imageLinkURL;
 
         public RawPanelData(JObject panel)
         {
@@ -20,14 +20,14 @@ namespace DSharp.Dlive.Query
             this.type = type;
             title = panel["title"].ToString();
             body = panel["body"].ToString();
-            imageURL = string.IsNullOrWhiteSpace(panel["imageURL"].ToString()) ? null : Uri.TryCreate(panel["imageURL"].ToString(), UriKind.RelativeOrAbsolute, out Uri imgUri) ? imgUri : null;
-            imageLinkURL = string.IsNullOrWhiteSpace(panel["imageLinkURL"].ToString()) ? null : Uri.TryCreate(panel["imageLinkURL"].ToString(), UriKind.RelativeOrAbsolute, out Uri imgLinkUri) ? imgLinkUri : null;
+            imageURL = panel["imageURL"].ToString();
+            imageLinkURL = panel["imageLinkURL"].ToString();
 
         }
 
         public AboutPanel ToAboutPanel()
         {
-            return new AboutPanel(id, type, title, body, imageURL, imageLinkURL);
+            return new AboutPanel(id, type, title, body, string.IsNullOrWhiteSpace(imageURL.ToString()) ? null : Uri.TryCreate(imageURL.ToString(), UriKind.RelativeOrAbsolute, out Uri imgUri) ? imgUri : null, string.IsNullOrWhiteSpace(imageLinkURL.ToString()) ? null : Uri.TryCreate(imageLinkURL.ToString(), UriKind.RelativeOrAbsolute, out Uri imgLinkUri) ? imgLinkUri : null);
         }
     }
 }

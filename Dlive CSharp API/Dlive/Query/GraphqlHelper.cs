@@ -177,51 +177,28 @@ namespace DSharp.Dlive.Query
                     followers.Append(@"totalCount
                         list {
                             username
-                            displayname
-                            avatar
-                            partnerStatus
-                            deactivated
-                            panels {
-                                id
-                                type
-                                title
-                                imageURL
-                                imageLinkURL
-                                body
-                            }
-                            livestream {
-                                ageRestriction
-                                thumbnailUrl
-                                disableAlert
-                                title
-                                createdAt
-                                totalReward
-                                watchingCount
-                                language {
-                                    language
-                                    code
-                                }
-                                category {
-                                    title
-                                    imgUrl
-                                    coverImgUrl
-                                }
-                                creator {
-                                    username
-                                    displayname
-                                }
-                                view
-                            }
-                            followers {
-                                totalCount
-                            }
-                            wallet {
-                                totalEarning
-                                balance
-                            }
-                            treasureChest {
-                                value
-                            }}}}}");
+                        displayname
+                        avatar
+                        partnerStatus
+                        deactivated
+                        panels {
+                            id
+                            type
+                            title
+                            imageURL
+                            imageLinkURL
+                            body
+                        }
+                        followers {
+                            totalCount
+                        }
+                        wallet {
+                            totalEarning
+                            balance
+                        }
+                        treasureChest {
+                            value
+                        }}}}}");
                     return followers.ToString();
                 case QueryType.SUBSCRIBERS:
                     StringBuilder subscribers = new StringBuilder();

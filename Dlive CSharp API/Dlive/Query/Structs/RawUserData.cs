@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace DSharp.Dlive.Query
@@ -22,7 +23,7 @@ namespace DSharp.Dlive.Query
 
         public RawUserData(JObject userData)
         {
-            Enum.TryParse(userData["partnerStatus"].ToString().ToUpper(), out PartnerStatus status);
+            Enum.TryParse(userData["partnerStatus"].ToString().ToUpper(), out partnerStatus);
 
             List<Badge> badges = new List<Badge>();
             if (userData.ContainsKey("badges"))
@@ -35,22 +36,24 @@ namespace DSharp.Dlive.Query
             }
 
             List<RawPanelData> panels = new List<RawPanelData>();
-            foreach (JObject panel in userData["panels"])
+            if (userData.ContainsKey("panels"))
             {
-                panels.Add(new RawPanelData(panel));
+                foreach (JObject panel in userData["panels"])
+                {
+                    panels.Add(new RawPanelData(panel));
+                }
             }
-
+            
             username = userData["username"].ToString();
             displayname = userData["displayname"].ToString();
-            partnerStatus = status;
             effect = userData.ContainsKey("effect") ? userData["effect"].ToString() : "";
             this.badges = badges.ToArray();
-            deactivated = bool.Parse(userData["deactivated"].ToString());
+            deactivated = userData.ContainsKey("deactivated") ? bool.Parse(userData["deactivated"].ToString()) : false;
             avatar = string.IsNullOrWhiteSpace(userData["avatar"].ToString()) ? null : new Uri(userData["avatar"].ToString());
-            followers = userData["followers"] as JObject;
-            treasureChest = userData["treasureChest"] as JObject;
-            wallet = userData["wallet"] as JObject;
-            livestream = userData["livestream"] != null ? userData["livestream"] as JObject : null;
+            followers = userData.ContainsKey("followers") ? userData["followers"] as JObject : null;
+            treasureChest = userData.ContainsKey("treasureChest") ? userData["treasureChest"] as JObject : null;
+            wallet = userData.ContainsKey("wallet") ? userData["wallet"] as JObject : null;
+            livestream = userData.ContainsKey("livestream") ? userData["livestream"] as JObject : null;
             this.panels = panels.ToArray();
             @private = userData.ContainsKey("private") ? new RawPrivateUserData(userData["private"] as JObject) : new RawPrivateUserData();
     }

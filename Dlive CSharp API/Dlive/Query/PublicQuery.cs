@@ -38,8 +38,6 @@ namespace DSharp.Dlive.Query
                 Task.Delay((Dlive.NextIntervalReset - DateTime.Now).Milliseconds).Wait();
             Dlive.IncreaseQueryCounter();
 
-            Console.WriteLine(GraphqlHelper.GetQueryString(QueryType.USER, new string[] { username }));
-
             GraphQLResponse response = _publicClient.SendQueryAsync(GraphqlHelper.GetQueryString(QueryType.USER, new string[] { username })).Result;
 
             PublicUserData userData;
