@@ -213,7 +213,7 @@ namespace DSharp.Dlive.Mutation
             GraphQLRequest _req = new GraphQLRequest
             {
                 Query =
-                    $"mutation{{emoteModeSet(emoteMode:{{ NoMineEmote: {disallowGlobalEmotes}, NoAllEmote: {disallowChannelEmotes}, NoGlobalEmote: {disallowGlobalEmotes}}}) {{ err {{ message }}}}}}"
+                    $"mutation{{emoteModeSet(emoteMode:{{ NoMineEmote: {disallowPersonalEmotes}, NoAllEmote: {disallowChannelEmotes}, NoGlobalEmote: {disallowGlobalEmotes}}}) {{ err {{ message }}}}}}"
             };
 
             if (!Dlive.CanExecuteQuery())
