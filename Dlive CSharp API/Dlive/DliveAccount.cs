@@ -39,7 +39,7 @@ namespace DSharp.Dlive
         public void RaiseError(string message)
         {
             OnError?.Invoke(message);
-            Console.Error.WriteLine(message);
+            Dlive.AddLogEntry(LogLevel.ERROR, message);
         }
     }
 }

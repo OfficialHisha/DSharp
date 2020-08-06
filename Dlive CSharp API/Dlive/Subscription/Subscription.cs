@@ -69,7 +69,7 @@ namespace DSharp.Dlive.Subscription
                 string error = response.payload.message.ToString();
                 _socket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, error, CancellationToken.None).Wait();
                 OnError?.Invoke(error);
-                Console.Error.WriteLine($"The connection was refused by remote host with reason: {error}");
+                Dlive.AddLogEntry(LogLevel.ERROR, $"The connection was refused by remote host with reason: {error}");
             }
 
             Receive();
@@ -104,7 +104,7 @@ namespace DSharp.Dlive.Subscription
 
                 if (!_isAlive)
                 {
-                    Console.Error.WriteLine("Lost connection to remote host");
+                    Dlive.AddLogEntry(LogLevel.ERROR, $"Lost connection to remote host");
                     OnError?.Invoke("Lost connection to remote host");
                     OnDisconnected?.Invoke("Lost connection to remote host");
                     IsConnected = false;
@@ -153,8 +153,7 @@ namespace DSharp.Dlive.Subscription
                     break;
                 default:
                     //Unknown type
-                    Console.WriteLine("Unknown message, please report on GitHub");
-                    Console.WriteLine(response);
+                    Dlive.AddLogEntry(LogLevel.WARN, $"An unknown message was received, please report on GitHub at https://github.com/OfficialHisha/DSharp/issues/new: {response}");
                     break;
             }
         }

@@ -2,11 +2,23 @@ using System;
 
 namespace DSharp.Dlive
 {
+    public enum LogLevel
+    {
+        /// <summary>Disable logging</summary>
+        NONE,
+        DEBUG,
+        INFO,
+        WARN,
+        ERROR,
+    }
+
     public static class Dlive
     {
-        public static string Version { get; } = "0.6.1";
-
         public static bool EnableRateLimiter { get; set; } = false;
+
+        public static LogLevel LogLevel { get; set; } = LogLevel.INFO;
+
+        public static string Version { get; } = "0.6.1";
 
         public static double LemonUSDValue { get; } = 0.012;
 
@@ -33,6 +45,27 @@ namespace DSharp.Dlive
         public static void IncreaseQueryCounter()
         {
             currentIntervalQueries++;
+        }
+
+        public static void AddLogEntry(LogLevel level, string message)
+        {
+            if (LogLevel > level) return;
+
+            switch (level)
+            {
+                case LogLevel.WARN:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+                case LogLevel.ERROR:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+                default:
+                    break;
+            }
+
+            Console.WriteLine($"[{DateTime.Now.ToLocalTime()}][{level.ToString()}]: {message}");
+
+            Console.ResetColor();
         }
     }
 }
